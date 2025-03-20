@@ -36,7 +36,11 @@
               "RelativeDocumentMoniker": "ATM.asm",
               "ToolTip": "C:\\Users\\yongc\\Desktop\\COA_ATMProgram\\ATM.asm",
               "RelativeToolTip": "ATM.asm",
+<<<<<<< HEAD
               "ViewState": "AQIAAJEAAAAAAAAAAAAAAKkAAABbAAAA",
+=======
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAABgAAAA8AAAA",
+>>>>>>> 62793f061daa5a7a633ceb10322208916ccc3ffb
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-03-06T13:56:58.787Z",
               "EditorCaption": ""

@@ -49,6 +49,20 @@ rewardPointsMessage BYTE "Reward Points: ", 0
 ;-------------Error Message-------------
 errorMessage BYTE "Invalid option . Please try again .", 0
 
+    ;Balance
+    balanceMessage BYTE "Your account balance are: RM", 0
+    balance DWORD 12345678 
+
+    ;ContinueRequest
+    continueMessage BYTE "Do you want to continue(y/n): ", 0
+    continueOption BYTE ?
+
+    ;PrintReceiptOption
+    printRequestMessage BYTE "Do you want to print receipt(y/n): ", 0
+    printOption BYTE ?
+    
+    
+
 .CODE
 
 ;----------Functions Prototype----------
@@ -56,14 +70,24 @@ errorMessage BYTE "Invalid option . Please try again .", 0
 PrintWelcome PROTO
 GetCCNum PROTO
 GetPinNum PROTO
+CheckBalance PROTO
+ContinueRequest PROTO
+PrintReceiptOption PROTO
 FutureValueCalculator PROTO
+
+;----------Main----------
 
 MAIN PROC
     
     call 
+
+    call PrintReceiptOption
+    call ContinueRequest
+
     call PrintWelcome
     call GetCCNum
     call GetPinNum
+    call CheckBalance
 
     call ExitProcess         
 MAIN ENDP
@@ -129,6 +153,40 @@ isValidPin:
     call Crlf
     ret
 GetPinNum ENDP
+
+CheckBalance PROC
+    mov edx, OFFSET balanceMessage
+    call writeString
+    mov eax, balance
+    call writeDec
+    ret
+CheckBalance ENDP
+
+ContinueRequest PROC
+    mov edx, OFFSET continueMessage
+    call writeString
+
+    call readChar
+    mov continueOption, al
+
+    call writeChar
+    call Crlf
+
+    ret
+ContinueRequest ENDP
+
+PrintReceiptOption PROC
+    mov edx, OFFSET printRequestMessage
+    call writeString
+
+    call readChar
+    mov printOption, al
+
+    call writeChar
+    call Crlf
+
+    ret
+PrintReceiptOption ENDP
 
 FutureValueCalculator PROC
     ; 1. Prompt for regular deposit
