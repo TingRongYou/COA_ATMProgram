@@ -18,26 +18,22 @@ INCLUDE Irvine32.inc
     invalidPinMessage BYTE ">>> Invalid PIN Number!", 0
 
 ;------------Main Menu----------------
-mainMenuOptions Byte "1.Deposit" ,0Dh, 0Ah,                     ;0Dh means carriage return
-                     "2. Withdraw", 0Dh, 0Ah,                   ;0Ah means linefeed
-                     "3. Check Balance", 0Dh, 0Ah,  
-                     "4. Currency Conversion", 0Dh, 0Ah,
-                     "5. Future Value Calculation", 0Dh, 0Ah,
-                     "6. Rewards Points", 0Dh, 0Ah,
-                     "7. Exit", 0Dh, 0Ah,
-                     "Enter your choice: ", 0                   ;0 means null terminator, marking the end of the string 
+mainMenuOptions Byte "1.Deposit", 0Dh, 0Ah                     ;0Dh means carriage return
+                Byte "2. Withdraw", 0Dh, 0Ah                   ;0Ah means linefeed
+                Byte "3. Check Balance", 0Dh, 0Ah  
+                Byte "4. Currency Conversion", 0Dh, 0Ah
+                Byte "5. Future Value Calculation", 0Dh, 0Ah
+                Byte "6. Rewards Points", 0Dh, 0Ah
+                Byte "7. Exit", 0Dh, 0Ah
+                Byte "Enter your choice: ", 0                   ;0 means null terminator, marking the end of the string 
 
 
 ;-------------Withdrawal---------------
 promptWithdrawalAmount BYTE "Enter withdrawal amount: ", 0
 notSufficientBalance BYTE "Insufficient balance amount.", 0
 
-;---------------Balance----------------
-currentBalance DWORD 10000; ;Example pf Initial Balance
-showBalanceMessage BYTE "CurrentBalance: RM ", 0
-
 ;--------Future Value Calculation------
-promptYealyDeposit BYTE "Enter regular yearly deposit: ",0
+promptYearlyDeposit BYTE "Enter regular yearly deposit: ",0
 promptAnnualInterestRate BYTE "Enter annual interest rate (%): ", 0
 promptNumYears BYTE "Enter number of years: ", 0
 futureValueMessage BYTE "Future Value: RM ", 0
@@ -79,8 +75,6 @@ FutureValueCalculator PROTO
 
 MAIN PROC
     
-    call 
-
     call PrintReceiptOption
     call ContinueRequest
 
