@@ -43,10 +43,18 @@ INCLUDE Irvine32.inc
     notSufficientBalance BYTE ">>> Insufficient balance amount! Please Enter again", 0
 
     ;--------Future Value Calculation------
-    promptYearlyDeposit BYTE "Enter regular yearly deposit: ",0
-    promptAnnualInterestRate BYTE "Enter annual interest rate (%): ", 0
-    promptNumYears BYTE "Enter number of years: ", 0
-    futureValueMessage BYTE "Future Value: RM ", 0
+    promptDeposit     BYTE "Enter yearly regular deposit (RM): ", 0
+    promptRate        BYTE "Enter annual interest rate (%) [1% / 2% ...] : ", 0
+    promptYears       BYTE "Enter number of years: ", 0
+    resultMsg         BYTE "Future Value: RM ", 0
+    overflowMessage   BYTE "Overflow Error! Result too large.", 0
+
+    deposit           DWORD ?         ; Yearly deposit (P)
+    interestRate      DWORD ?         ; Interest rate (as a whole number, e.g., 5 for 5%)
+    years             DWORD ?         ; Number of years (n)
+    futureValue       DWORD 0         ; Final accumulated amount (FV) in sen
+    oneHundred        DWORD 100       ; Scaling factor for percentage calculations
+    oneThousand       DWORD 1000      ; More precise scaling factor for division
 
     ;------------Reward Points--------------
     rewardPoints DWORD 0    ;Example of initial reward points
@@ -93,7 +101,6 @@ QuitProgram PROTO
 ;----------Main----------
 
 MAIN PROC
-
     call PrintWelcome
     call GetCardNum
     call GetPinNum
@@ -242,7 +249,6 @@ HandleMainMenu ENDP
 
 ;----------Withdraw----------
 WithdrawMoney PROC
-
     call Clrscr
 
     mov edx, OFFSET withdrawTitle
@@ -412,71 +418,100 @@ CheckBalance ENDP
 
 ;----------Future Value Calculation----------
 FutureValueCalculator PROC
-    ; 1. Prompt for regular deposit
-    mov edx, OFFSET promptYearlyDeposit         ; Load the address of the prompt message into EDX.
-    call WriteString                            ; Display the prompt message.
-    call ReadInt                                ; Read the yearly deposit amount from the user and store it in EAX.
-    mov ebx, eax                                ; Move the yearly deposit amount from EAX to EBX (P).
+    ; Get Deposit Amount (in RM)
+    mov edx, OFFSET promptDeposit
+    call WriteString
+    call ReadInt        ; Integer because deposit money is only 
+    mov deposit, eax    ; Store deposit (in RM)
 
-    ; 2. Prompt for interest rate
-    mov edx, OFFSET promptAnnualInterestRate    ; Load the address of the prompt message into EDX.
-    call WriteString                            ; Display the prompt message.
-    call ReadInt                                ; Read the annual interest rate from the user and store it in EAX.
-    mov ecx, eax                                ; Move the interest rate from EAX to ECX (r).
+    ; Get Interest Rate (as a whole number percentage)
+    mov edx, OFFSET promptRate
+    call WriteString
+    call ReadInt
+    mov interestRate, eax    ; Store interest rate
 
-    ; 3. Prompt for number of years
-    mov edx, OFFSET promptNumYears              ; Load the address of the prompt message into EDX.
-    call WriteString                            ; Display the prompt message.
-    call ReadInt                                ; Read the number of years from the user and store it in EAX.
-    mov edi, eax                                ; Move the number of years from EAX to EDI (n).
+    ; Get Number of Years
+    mov edx, OFFSET promptYears
+    call WriteString
+    call ReadInt
+    mov years, eax    ; Store number of years
 
-    ; 4. ---Future Value = P * (((1 + r)^n - 1) / r)---
-    ;---P = yearly deposit, r = yearly interest rate (decimal), n = number of years---
+    ; Convert deposit to sen (1 RM = 100 sen)
+    mov eax, deposit
+    imul eax, oneHundred    ; Convert deposit to sen --> Signed Multiplication (Avoid Overflow)
+    mov deposit, eax        ; Store the deposit in sen
 
-    ; Convert r to decimal (r / 100)
-    mov eax, ecx    ; Move the interest rate (r) into EAX.
-    mov edx, 0      ; Clear EDX for division.
-    mov esi, 10000    ; Load 100 into ESI (for percentage calculation)  
-    div esi         ; EAX = r / 100. (=0) 
-    add eax, 10000    ; Convert to (1 + r)   (EAX = 0 + 100 = 100) which means 1.00) --> Remainder store in EDX (100 + 7 = 107)
-    mov ecx, eax    ; Store (1 + r) in ECX. (ECX = 100)
+    ; Initialize Future Value in sen (starting with 0)
+    mov futureValue, 0
 
-    ; Calculate (1 + r)^n
-    mov eax, 10000    ; Start with 100 (representing 1.00).
-    mov ebp, edi    ; Move n (number of years) to EBP as the loop counter.  --> Use ebp to keep the original n 
+    ; Loop to compute FV using corrected compound interest formula
+    mov ecx, years    ; Set the loop counter to the number of years
 
-powerLoop:
-    mul ecx         ; Multiply the current result in EAX by (1 + r) (EAX = EAX * (1 + r)). (since cannot floating point number) (if r = 7 , then ecx = 107)
-                    ; Multiply 100 for (107 *100) means when the index is 1  --> First loop (get the same thing)
-    div esi         ; Divide the result by 100 (EAX = EAX / 100).  (Maintain correct scale)
-    dec ebp         ; Decrease loop counter.    
-    jnz powerLoop   ; If not equal to 0, continue looping.
+first_year:
+    ; First Year - Only add deposit (No Interest Applied)
+    mov eax, deposit
+    add futureValue, eax
+    loop after_first_year  ; Skip interest calculation for the first year --> The loop instruction decrements ecx by 1.
 
-    ; Subtract 1
-    sub eax, 10000    ; Subtract 100 from the result (EAX = (1 + r)^n - 1).
+after_first_year: ; No interest calculation at here
 
-    ; Divide by r (handling division by zero)
-    cmp ecx, 10000          ; Check if r is zero.
-    je divisionByZero   ; If r is zero, jump to the divisionByZero handler.
-    mov edx, 0          ; Clear EDX before division.
-    div ecx             ; Divide the result by r (EAX = ((1 + r)^n - 1) / r).
+calc_loop:
+    cmp ecx, 0
+    je display_result ; Exit loop if years == 0
 
-    jmp continueCalc    ; Jump to continueCalc to proceed with the next calculation.
+    ; Step 1: Apply interest BEFORE adding deposit
+    mov eax, futureValue
+    mov edx, 0            
+    imul eax, interestRate    ; Multiply FV by interestRate
+    mov edx, 0               
+    idiv oneHundred          ; Divide by 100 for proper scaling --> Signed Division (Avoid Overflow)
 
-divisionByZero:
-    mov eax, 0          ; If r is zero, set EAX to 0.
+    ; Step 2: Add computed interest to FV
+    add futureValue, eax
 
-continueCalc:
-    ; Multiply by P
-    mul ebx             ; Multiply the result by P (EAX = P * (((1 + r)^n - 1) / r)).
+    ; Step 3: Add deposit (new yearly deposit in sen)
+    mov eax, deposit
+    add futureValue, eax
 
-    ; --- Display Result ---
-    mov edx, OFFSET futureValueMessage  ; Load the address of the output message into EDX.
-    call WriteString                    ; Display the output message.
-    call WriteDec                       ; Display the calculated future value (stored in EAX).
-    call Crlf                           ; Print a newline character.
+    ; Check for overflow before continuing
+    jnc continueLoop    ;jump if no carry
+    mov edx, OFFSET overflowMessage
+    call WriteString
+    jmp endProgram
 
-    ret                                 ; Return from the procedure.
+continueLoop:
+    loop calc_loop    ; Decrement the year counter and repeat the loop
+
+display_result:
+    ; --- Display Future Value in RM and Sen ---
+    call Crlf
+    mov edx, OFFSET resultMsg
+    call WriteString
+
+    ; Convert future value from sen to RM and sen
+    mov eax, futureValue
+    mov edx, 0
+    div oneHundred    ; EAX = RM, EDX = sen
+
+    ; Display RM part
+    call WriteDec
+    mov al, '.'    ; Print decimal point
+    call WriteChar
+
+    ; Display Sen part (ensure two digits)
+    mov eax, edx    ; Move sen to EAX (remainder store in edx)
+    cmp eax, 10    ; If less than 10, add leading zero) (5sen become .05)
+    jae print_sen   ;(>= 10, proceed to print_sen)
+    mov al, '0'     ; add trailing zero
+    call WriteChar
+
+print_sen:
+    call WriteDec
+    call Crlf
+
+endProgram:
+    exit
+
 FutureValueCalculator ENDP
 
 ;----------Reward Points----------
