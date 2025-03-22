@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\yongc\\Desktop\\COA_ATMProgram\\",
+  "WorkspaceRootPath": "C:\\Users\\Acer\\source\\repos\\5.BankingProgram\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9088ADC6-CB1C-47A3-A1CF-145AB7D95C30}|Banking Program.vcxproj|C:\\Users\\yongc\\Desktop\\COA_ATMProgram\\ATM.asm||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{9088ADC6-CB1C-47A3-A1CF-145AB7D95C30}|Banking Program.vcxproj|C:\\Users\\Acer\\source\\repos\\5.BankingProgram\\ATM.asm||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{9088ADC6-CB1C-47A3-A1CF-145AB7D95C30}|Banking Program.vcxproj|solutionrelative:ATM.asm||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
@@ -32,17 +32,13 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "ATM.asm",
-              "DocumentMoniker": "C:\\Users\\yongc\\Desktop\\COA_ATMProgram\\ATM.asm",
+              "DocumentMoniker": "C:\\Users\\Acer\\source\\repos\\5.BankingProgram\\ATM.asm",
               "RelativeDocumentMoniker": "ATM.asm",
-              "ToolTip": "C:\\Users\\yongc\\Desktop\\COA_ATMProgram\\ATM.asm",
+              "ToolTip": "C:\\Users\\Acer\\source\\repos\\5.BankingProgram\\ATM.asm",
               "RelativeToolTip": "ATM.asm",
-<<<<<<< HEAD
-              "ViewState": "AQIAAJEAAAAAAAAAAAAAAKkAAABbAAAA",
-=======
-              "ViewState": "AQIAAAwAAAAAAAAAAAAAABgAAAA8AAAA",
->>>>>>> 62793f061daa5a7a633ceb10322208916ccc3ffb
+              "ViewState": "AQIAANgAAAAAAAAAAAAAAOMAAAANAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-03-06T13:56:58.787Z",
+              "WhenOpened": "2025-03-22T05:52:48.074Z",
               "EditorCaption": ""
             }
           ]
