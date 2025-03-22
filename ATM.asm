@@ -1,8 +1,9 @@
 INCLUDE Irvine32.inc
 
 .DATA
-    ;-----------Welcome Message-----------
+    ;-----------Welcome & Exit Message-----------
     welcomeMessage BYTE "+-----Welcome to PREMIER ATM SYSTEM!-----+", 0  
+    exitMessage BYTE "+-----Thanks for using PREMIER ATM SYSTEM, have a nice day!-----+", 0
 
     ;-----------Variable for GetCardNum------------
     promptCard1 BYTE "Enter first 8-digit credit card number: ", 0
@@ -33,13 +34,13 @@ INCLUDE Irvine32.inc
                     BYTE "7. Exit", 0Dh, 0Ah, 0                   ;0 means null terminator, marking the end of the string 
 
     ;------------Handle Main Menu Choice----------
-    mainMenuMessage BYTE "Enter your choice: ", 0
-    mainMenuChoice BYTE ?
+    mainMenuMessage BYTE "Enter your choice(1-7): ", 0
+    mainMenuChoice DWORD ?
 
     ;-------------Withdrawal---------------
     withdrawTitle BYTE "+---------Money Withdrawal---------+", 0
     promptWithdrawalAmount BYTE "Enter withdrawal amount: ", 0
-    notSufficientBalance BYTE "Insufficient balance amount.", 0
+    notSufficientBalance BYTE ">>> Insufficient balance amount! Please Enter again", 0
 
     ;--------Future Value Calculation------
     promptYearlyDeposit BYTE "Enter regular yearly deposit: ",0
@@ -52,19 +53,24 @@ INCLUDE Irvine32.inc
     rewardPointsMessage BYTE "Reward Points: ", 0
 
     ;-------------Error Message-------------
-    errorMessage BYTE "Invalid option . Please try again .", 0
+    errorMessage BYTE ">>> Invalid option, Please try again!", 0
 
-        ;Balance
-        balanceMessage BYTE "Your account balance are: RM", 0
-        balance DWORD 12345678 
+    ;-------------Balance-------------
+    checkBalanceTitle BYTE "+---------Check Balance---------+", 0
+    balanceMessage BYTE ">>> Your current account balance are: RM", 0
+    balance DWORD 12345678 
 
-        ;ContinueRequest
-        continueMessage BYTE "Do you want to continue(y/n): ", 0
-        continueOption BYTE ?
+    ;-------------Continue?-------------
+    continueMessage BYTE "Do you want to continue(y/n)?: ", 0
+    continueOption BYTE ?
 
-        ;PrintReceiptOption
-        printRequestMessage BYTE "Do you want to print receipt(y/n): ", 0
-        printOption BYTE ?
+    ;-------------Print Receipt?-------------
+    printRequestMessage BYTE "Do you want to print receipt(y/n)?: ", 0
+    printOption BYTE ?
+
+    ;-------------Reperform Any Function?-------------
+    redoMessage BYTE "Do you want to perform any other functions(y/n)?: ", 0
+    redoOption BYTE ?
     
     
 
@@ -81,6 +87,8 @@ PrintReceiptOption PROTO
 FutureValueCalculator PROTO
 DepositMoney PROTO  ; New function for deposit
 DisplayMainMenu PROTO
+RePerformFunction PROTO
+QuitProgram PROTO
 
 ;----------Main----------
 
@@ -90,7 +98,6 @@ MAIN PROC
     call GetCardNum
     call GetPinNum
     call DisplayMainMenu
-    call HandleMainMenu
 
     EXIT         
 MAIN ENDP
@@ -180,6 +187,7 @@ DisplayMainMenu PROC
     call Clrscr
     mov edx, OFFSET mainMenuOptions
     call writeString
+    call HandleMainMenu
     ret
 DisplayMainMenu ENDP
 
@@ -188,30 +196,45 @@ HandleMainMenu PROC
     call writeString
 
     call readInt
+    mov mainMenuChoice, eax
 
-    cmp eax,1 
+    cmp mainMenuChoice,1 
     ;je DepositMoney
 
-    cmp eax, 2 
+    cmp mainMenuChoice, 2 
     je withdrawMoney
     
-    cmp eax, 3
+    cmp mainMenuChoice, 3
     je CheckBalance
 
-    cmp eax, 4
+    cmp mainMenuChoice, 4
     ;je currencyConversion
 
-    cmp eax, 5
+    cmp mainMenuChoice, 5
     je FutureValueCalculator
 
-    cmp eax, 6
+    cmp mainMenuChoice, 6
     ;je Rewards Points
 
-    cmp eax, 7
-    je ExitProcess
+    cmp mainMenuChoice, 7
+    je QuitProgram
+    mov edx, OFFSET errorMessage
+    call WriteString
+    call Crlf
+    call Crlf
+    jg HandleMainMenu
+
+    cmp eax, 0
+    mov edx, OFFSET errorMessage
+    call WriteString
+    call Crlf
+    call Crlf
+    jle HandleMainMenu
+
 
     call Crlf
     call Crlf
+
     ret
 HandleMainMenu ENDP
 
@@ -229,6 +252,10 @@ WithdrawMoney PROC
 
     call CheckBalance
 
+    call Crlf
+
+CheckAndWithdraw:
+
     ; Prompt user for withdrawal amount
     mov edx, OFFSET promptWithdrawalAmount
     call WriteString
@@ -237,26 +264,33 @@ WithdrawMoney PROC
     call ReadInt
     mov ebx, eax           ; Store withdrawal amount in EBX
 
-    ; Convert withdrawal to cents (multiply by 100)
-    mov eax, ebx
+    ; Convert balance from cents to RM for comparison
+    mov eax, balance
     mov ecx, 100
-    mul ecx                ; EAX = withdrawal * 100 (in cents)
+    xor edx, edx
+    div ecx                ; EAX = balance in RM
 
     ; Check if withdrawal exceeds balance
-    cmp eax, balance
+    cmp ebx, eax
     jg InsufficientFunds   ; If withdrawal > balance, jump to error message
 
     ; Subtract withdrawal from balance
-    sub balance, eax
+    sub eax, ebx
+
+    ; Convert updated balance back to cents
+    mov ecx, 100
+    mul ecx
+    mov balance, eax
 
     ; Display updated balance
     mov edx, OFFSET balanceMessage
     call WriteString
 
+   ; Convert updated balance to RM for display
     mov eax, balance
     mov ecx, 100
     xor edx, edx
-    div ecx                ; EAX = integer part (RM), EDX = cents
+    div ecx
 
     ; Print integer part (RM)
     call WriteDec
@@ -273,17 +307,60 @@ WithdrawMoney PROC
 printCents:
     call WriteDec
     call Crlf
-    ret
+
+    call ContinueRequest
+
+    ; Handle 'Y' or 'y'
+    mov al, byte ptr [continueOption] ; Load continueOption into AL
+    or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
+    cmp al, 'y'
+    je CheckAndWithdraw                 ; If 'y' (or 'Y'), go to CheckAndWithdraw
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je PrintReceiptRequest              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+PrintReceiptRequest:
+    call PrintReceiptOption
+    
+    ; Handle 'N' or 'n' for skipping receipt
+    mov al, byte ptr [PrintReceiptOption] ; Load PrintReceiptOption into AL
+    or al, 32
+    cmp al, 'n'
+    je ChooseAnotherFunction
+
+ChooseAnotherFunction:
+    call RePerformFunction
+
+    ; Handle 'Y' or 'y' to go back to main menu
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
+    or al, 32
+    cmp al, 'y'
+    je DisplayMainMenu
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
 
 InsufficientFunds:
     mov edx, OFFSET notSufficientBalance
     call WriteString
     call Crlf
-    ret
+    call Crlf
+    jmp CheckAndWithdraw
+
 WithdrawMoney ENDP
 
 ;----------Check Balance----------
 CheckBalance PROC
+
+    call ClrScr
+
+    mov edx, OFFSET checkBalanceTitle
+    call writeString
+
+    call Crlf
+
     mov edx, OFFSET balanceMessage
     call writeString
         ; Print integer part (balance / 100)
@@ -310,6 +387,24 @@ printCents:
     call WriteDec      ; Print cents
 
     call Crlf
+
+    cmp mainMenuChoice, 3
+    jne ExitCheckBalance
+
+RequestReperform:
+    call RePerformFunction
+
+    ; Handle 'Y' or 'y' to go back to main menu
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
+    or al, 32
+    cmp al, 'y'
+    je DisplayMainMenu
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+ExitCheckBalance:
     ret
 CheckBalance ENDP
 
@@ -386,8 +481,19 @@ FutureValueCalculator ENDP
 
 ;----------Reward Points----------
 
+QuitProgram PROC
+    call ClrScr
+    mov edx, OFFSET exitMessage
+    call WriteString
+    call Crlf
+    call Crlf
+    call ExitProcess
+    ret
+QuitProgram ENDP
+
 ;----------Redo Process----------
 ContinueRequest PROC
+    call Crlf
     mov edx, OFFSET continueMessage
     call writeString
 
@@ -395,6 +501,7 @@ ContinueRequest PROC
     mov continueOption, al
 
     call writeChar
+    call Crlf
     call Crlf
 
     ret
@@ -412,6 +519,25 @@ PrintReceiptOption PROC
 
     ret
 PrintReceiptOption ENDP
+
+PrintReceipt PROC
+    
+PrintReceipt ENDP
+
+RePerformFunction PROC
+    call Crlf
+    mov edx, OFFSET redoMessage
+    call writeString
+
+    call readChar
+    mov redoOption, al
+
+    call writeChar
+    call Crlf
+    call Crlf
+
+    ret
+RePerformFunction ENDP
 
 END MAIN
 
