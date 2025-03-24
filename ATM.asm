@@ -41,13 +41,15 @@ INCLUDE Irvine32.inc
     withdrawTitle BYTE "+---------Money Withdrawal---------+", 0
     promptWithdrawalAmount BYTE "Enter withdrawal amount: ", 0
     notSufficientBalance BYTE ">>> Insufficient balance amount! Please Enter again", 0
+    confirmWithdraw BYTE "Confirm Withdrawal (Y/N)? ", 0
 
     ;--------Future Value Calculation------
+    futureValueCalTitle BYTE "+---------Future Value Calculator---------+", 0
     promptDeposit     BYTE "Enter yearly regular deposit (RM): ", 0
     promptRate        BYTE "Enter annual interest rate (%) [1% / 2% ...] : ", 0
     promptYears       BYTE "Enter number of years: ", 0
-    resultMsg         BYTE "Future Value: RM ", 0
-    overflowMessage   BYTE "Overflow Error! Result too large.", 0
+    resultMsg         BYTE ">>> Future Value: RM ", 0
+    overflowMessage   BYTE ">>> Overflow Error! Result too large.", 0
 
     deposit           DWORD ?         ; Yearly deposit (P)
     interestRate      DWORD ?         ; Interest rate (as a whole number, e.g., 5 for 5%)
@@ -76,9 +78,59 @@ INCLUDE Irvine32.inc
     printRequestMessage BYTE "Do you want to print receipt(y/n)?: ", 0
     printOption BYTE ?
 
+    ;-------------Receipt-------------
+    receiptHeader BYTE "+--------------------------+", 0Dh, 0Ah
+                 BYTE "   PREMIER ATM RECEIPT", 0Dh, 0Ah
+                 BYTE "+--------------------------+", 0
+
+    receiptDeposit BYTE "Money Deposited: RM", 0
+    DepositTotal DWORD ?
+
+    receiptWithdraw BYTE "Money Withdrawed: RM", 0
+    WithdrawTotal DWORD ?
+
+    receiptBalance BYTE "Balance: RM", 0
+
+    receiptFooter BYTE "+--------------------------+", 0
+
     ;-------------Reperform Any Function?-------------
     redoMessage BYTE "Do you want to perform any other functions(y/n)?: ", 0
     redoOption BYTE ?
+
+    ;-------------Deposit-------------
+    depositTitle BYTE "+---------Money Deposit---------+", 0
+    getDeposit BYTE "Enter amount to deposit: ", 0
+    confirmDeposit BYTE "Confirm deposit (Y/N)? ", 0
+    invalidDepositMessage BYTE "Invalid deposit amount. Please enter a positive value.", 0
+    depositAmount DWORD ?         ; Stores deposit amount entered by user
+
+        ; Currency Selection
+    currencyMenu BYTE "Select Currency:", 0
+    option1 BYTE "1 - USD", 0
+    option2 BYTE "2 - EUR", 0
+    option3 BYTE "3 - GBP", 0
+    option4 BYTE "4 - JPY", 0
+    option5 BYTE "5 - AUD", 0
+    option6 BYTE "6 - CAD", 0
+    option7 BYTE "7 - CHF", 0
+    
+    promptCurrency BYTE "Enter your choice (1-7): ", 0
+    selectedCurrency DWORD ?
+
+    ; Withdrawal Amount
+    promptAmount BYTE "Enter withdrawal amount: ", 0
+    withdrawalAmount DWORD ?
+    
+    ; Exchange Rates (Relative to Local Currency)
+    rateUSD REAL4 1.0
+    rateEUR REAL4 0.92
+    rateGBP REAL4 0.78
+    rateJPY REAL4 110.5
+    rateAUD REAL4 1.45
+    rateCAD REAL4 1.35
+    rateCHF REAL4 0.92
+
+    finalAmount REAL4 ?
     
     
 
@@ -206,7 +258,7 @@ HandleMainMenu PROC
     mov mainMenuChoice, eax
 
     cmp mainMenuChoice,1 
-    ;je DepositMoney
+    je DepositMoney
 
     cmp mainMenuChoice, 2 
     je withdrawMoney
@@ -215,7 +267,7 @@ HandleMainMenu PROC
     je CheckBalance
 
     cmp mainMenuChoice, 4
-    ;je currencyConversion
+    je CurrencyConversion
 
     cmp mainMenuChoice, 5
     je FutureValueCalculator
@@ -246,6 +298,202 @@ HandleMainMenu PROC
 HandleMainMenu ENDP
 
 ;----------Deposit----------
+DepositMoney PROC
+    call Clrscr
+
+    mov edx, OFFSET depositTitle
+    call WriteString
+
+    call Crlf
+
+    call CheckBalance
+
+    call Crlf
+
+depositLoop:
+    mov edx, OFFSET getDeposit
+    call WriteString
+
+    call ReadInt
+    mov ecx, 100
+    mul ecx                ; EAX = withdrawal * 100 (in cents)
+    mov depositAmount, eax
+
+    cmp eax, 0
+    jle invalidDeposit  ; If deposit is <= 0, prompt again
+
+makeConfirmationDeposit:
+    mov edx, OFFSET confirmDeposit
+    call WriteString
+
+    ; Read user input (confirmation)
+    call ReadChar
+    or al, 32                 ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar            ; Echo the character
+
+    cmp al, 'y'
+    je updateBalance          ; If 'y', proceed to update balance
+
+    call Crlf
+
+    cmp al, 'n'
+    je NotConfirmDeposit            ; If 'n', return to deposit loop
+
+    ; Invalid input, re-prompt
+    jmp makeConfirmationDeposit
+
+invalidDeposit:
+    call Crlf
+    call Crlf
+    mov edx, OFFSET invalidDepositMessage
+    call WriteString
+    call Crlf
+    jmp depositLoop
+
+updateBalance:
+    ; === Step 1: Separate RM and cent portion ===
+    mov eax, balance         ; Load current balance (in cents)
+
+    ; === Step 2: Add deposit amount (whole RM only) ===
+    add eax, depositAmount   ; Add deposit amount (RM only)
+
+    ; Store the updated balance
+    mov balance, eax
+
+    call Crlf
+    call Crlf
+
+        ; Convert depositAmount (in cents) to RM using EAX
+    mov eax, depositAmount     ; Load deposit amount (in cents)
+    mov ecx, 100
+    xor edx, edx               ; Clear upper part for division
+    div ecx                    ; EAX = RM part, EDX = remaining cents
+
+    ; Add RM value to depositTotal
+    add depositTotal, eax      ; Update depositTotal (in RM)
+
+    ; === Step 4: Display updated balance message ===
+    mov edx, OFFSET balanceMessage
+    call WriteString
+
+    mov eax, balance
+    mov ecx, 100
+    xor edx, edx
+    div ecx                ; EAX = integer part (RM), EDX = cents
+
+    ; Print integer part (RM)
+    call WriteDec
+
+    ; Print decimal point and cents
+    mov al, '.'
+    call WriteChar
+    mov eax, edx
+    cmp eax, 9
+    jg printCents
+    mov al, '0'
+    call WriteChar
+
+printCents:
+    call WriteDec
+    call Crlf
+
+NotConfirmDeposit:
+    ; Continue with next operation
+    call ContinueRequest
+
+    ; Handle 'Y' or 'y'
+    mov al, byte ptr [continueOption] ; Load continueOption into AL
+    or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
+    cmp al, 'y'
+    je depositLoop                 ; If 'y' (or 'Y'), go to CheckAndWithdraw
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je PrintReceiptRequest              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+PrintReceiptRequest:
+    call PrintReceiptOption
+
+    ; Handle 'Y' or 'y' for receipt
+    mov al, byte ptr [PrintOption] ; Load PrintReceiptOption into AL
+    or al, 32
+    cmp al, 'y'
+    je PrintDepositReceipt
+    
+    ; Handle 'N' or 'n' for skipping receipt
+    mov al, byte ptr [PrintOption] ; Load PrintReceiptOption into AL
+    or al, 32
+    cmp al, 'n'
+    je ChooseAnotherFunction
+
+PrintDepositReceipt:
+    call ClrScr              ; Clear the screen for a fresh receipt view
+
+    ; Print receipt header
+    mov edx, OFFSET receiptHeader
+    call WriteString
+
+    call Crlf
+
+    ; Indicate deposit
+    mov edx, OFFSET receiptDeposit
+    call WriteString
+
+    ; Display deposit amount
+    mov eax, depositTotal
+    call WriteDec
+
+    call Crlf
+
+    ; Print current balance label
+    mov edx, OFFSET receiptBalance
+    call WriteString
+
+    ; Display current balance (in RM.cents format)
+    mov eax, balance
+    mov ebx, 100
+    xor edx, edx
+    div ebx                  ; EAX = RM, EDX = cents
+
+    ; Display RM portion
+    call WriteDec
+
+    ; Display decimal point
+    mov al, '.'
+    call WriteChar
+
+    ; Ensure two-digit cents display (e.g., 05 instead of 5)
+    cmp edx, 10
+    jge printDepositCents
+    mov al, '0'
+    call WriteChar
+
+printDepositCents:
+    mov eax, edx
+    call WriteDec
+    call Crlf
+    mov edx, OFFSET receiptFooter
+    call WriteString
+    call Crlf                ; New line after balance
+    call Crlf
+
+    mov depositTotal, 0
+
+ChooseAnotherFunction:
+    call RePerformFunction
+
+    ; Handle 'Y' or 'y' to go back to main menu
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
+    or al, 32
+    cmp al, 'y'
+    je DisplayMainMenu
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+    ret
+DepositMoney ENDP
 
 ;----------Withdraw----------
 WithdrawMoney PROC
@@ -261,7 +509,6 @@ WithdrawMoney PROC
     call Crlf
 
 CheckAndWithdraw:
-
     ; Prompt user for withdrawal amount
     mov edx, OFFSET promptWithdrawalAmount
     call WriteString
@@ -270,33 +517,28 @@ CheckAndWithdraw:
     call ReadInt
     mov ebx, eax           ; Store withdrawal amount in EBX
 
-    ; Convert balance from cents to RM for comparison
-    mov eax, balance
+    add withdrawTotal, eax
+
+    ; Convert withdrawal to cents (multiply by 100)
+    mov eax, ebx
     mov ecx, 100
-    xor edx, edx
-    div ecx                ; EAX = balance in RM
+    mul ecx                ; EAX = withdrawal * 100 (in cents)
 
     ; Check if withdrawal exceeds balance
-    cmp ebx, eax
+    cmp eax, balance
     jg InsufficientFunds   ; If withdrawal > balance, jump to error message
 
     ; Subtract withdrawal from balance
-    sub eax, ebx
-
-    ; Convert updated balance back to cents
-    mov ecx, 100
-    mul ecx
-    mov balance, eax
+    sub balance, eax
 
     ; Display updated balance
     mov edx, OFFSET balanceMessage
     call WriteString
 
-   ; Convert updated balance to RM for display
     mov eax, balance
     mov ecx, 100
     xor edx, edx
-    div ecx
+    div ecx                ; EAX = integer part (RM), EDX = cents
 
     ; Print integer part (RM)
     call WriteDec
@@ -327,13 +569,72 @@ printCents:
     je PrintReceiptRequest              ; If 'n' (or 'N'), go to PrintReceiptRequest
 
 PrintReceiptRequest:
-    call PrintReceiptOption
+    call PrintReceiptOption    ; Display the receipt prompt
+
+    ; Handle 'Y' or 'y' for receipt
+    mov al, byte ptr [PrintOption] ; Load PrintReceiptOption into AL
+    or al, 32
+    cmp al, 'y'
+    je PrintWithdrawalReceipt
     
     ; Handle 'N' or 'n' for skipping receipt
-    mov al, byte ptr [PrintReceiptOption] ; Load PrintReceiptOption into AL
+    mov al, byte ptr [PrintOption] ; Load PrintReceiptOption into AL
     or al, 32
     cmp al, 'n'
     je ChooseAnotherFunction
+
+PrintWithdrawalReceipt:
+    call ClrScr              ; Clear the screen for a fresh receipt view
+
+    ; Print receipt header
+    mov edx, OFFSET receiptHeader
+    call WriteString
+
+    call Crlf
+
+    ; Indicate deposit
+    mov edx, OFFSET receiptWithdraw
+    call WriteString
+
+    ; Display deposit amount
+    mov eax, WithdrawTotal
+    call WriteDec
+
+    call Crlf
+
+    ; Print current balance label
+    mov edx, OFFSET receiptBalance
+    call WriteString
+
+    ; Display current balance (in RM.cents format)
+    mov eax, balance
+    mov ebx, 100
+    xor edx, edx
+    div ebx                  ; EAX = RM, EDX = cents
+
+    ; Display RM portion
+    call WriteDec
+
+    ; Display decimal point
+    mov al, '.'
+    call WriteChar
+
+    ; Ensure two-digit cents display (e.g., 05 instead of 5)
+    cmp edx, 10
+    jge printWithdrawalCents
+    mov al, '0'
+    call WriteChar
+
+printWithdrawalCents:
+    mov eax, edx
+    call WriteDec
+    call Crlf
+    mov edx, OFFSET receiptFooter
+    call WriteString
+    call Crlf                ; New line after balance
+    call Crlf
+
+    mov withdrawTotal, 0
 
 ChooseAnotherFunction:
     call RePerformFunction
@@ -360,6 +661,10 @@ WithdrawMoney ENDP
 ;----------Check Balance----------
 CheckBalance PROC
 
+    mov eax, mainMenuChoice
+    cmp eax, 3
+    jne SkipCheckBalance
+
     call ClrScr
 
     mov edx, OFFSET checkBalanceTitle
@@ -367,6 +672,7 @@ CheckBalance PROC
 
     call Crlf
 
+SkipCheckBalance:
     mov edx, OFFSET balanceMessage
     call writeString
         ; Print integer part (balance / 100)
@@ -394,7 +700,13 @@ printCents:
 
     call Crlf
 
+    cmp mainMenuChoice, 3 
+    je RequestReperform
+
     cmp mainMenuChoice, 3
+    jne ExitCheckBalance
+
+    cmp mainMenuChoice, 1
     jne ExitCheckBalance
 
 RequestReperform:
@@ -415,9 +727,135 @@ ExitCheckBalance:
 CheckBalance ENDP
 
 ;----------Currency Conversion----------
+CurrencyConversion PROC
+    call ChooseCurrency
+    call GetWithdrawalAmount
+    call ConvertCurrency
+    call DisplayFinalAmount
+CurrencyConversion ENDP
+
+ChooseCurrency PROC
+    mov edx, OFFSET currencyMenu
+    call WriteString
+    call Crlf
+
+    mov edx, OFFSET option1
+    call WriteString
+    call Crlf
+
+    mov edx, OFFSET option2
+    call WriteString
+    call Crlf
+
+    mov edx, OFFSET option3
+    call WriteString
+    call Crlf
+
+    mov edx, OFFSET option4
+    call WriteString
+    call Crlf
+
+    mov edx, OFFSET option5
+    call WriteString
+    call Crlf
+
+    mov edx, OFFSET option6
+    call WriteString
+    call Crlf
+
+    mov edx, OFFSET option7
+    call WriteString
+    call Crlf
+
+    mov edx, OFFSET promptCurrency
+    call WriteString
+    call ReadInt
+    mov selectedCurrency, eax
+
+    ret
+ChooseCurrency ENDP
+
+GetWithdrawalAmount PROC
+    mov edx, OFFSET promptAmount
+    call WriteString
+    call ReadInt
+    mov withdrawalAmount, eax
+    ret
+GetWithdrawalAmount ENDP
+
+ConvertCurrency PROC
+    finit  ; Initialize floating-point operations
+
+    mov eax, withdrawalAmount
+    push eax
+    fild DWORD PTR [esp]  ; Load integer amount as float
+    pop eax
+
+    cmp selectedCurrency, 1
+    je convertUSD
+    cmp selectedCurrency, 2
+    je convertEUR
+    cmp selectedCurrency, 3
+    je convertGBP
+    cmp selectedCurrency, 4
+    je convertJPY
+    cmp selectedCurrency, 5
+    je convertAUD
+    cmp selectedCurrency, 6
+    je convertCAD
+    cmp selectedCurrency, 7
+    je convertCHF
+
+convertUSD:
+    fmul rateUSD
+    jmp storeResult
+
+convertEUR:
+    fmul rateEUR
+    jmp storeResult
+
+convertGBP:
+    fmul rateGBP
+    jmp storeResult
+
+convertJPY:
+    fmul rateJPY
+    jmp storeResult
+
+convertAUD:
+    fmul rateAUD
+    jmp storeResult
+
+convertCAD:
+    fmul rateCAD
+    jmp storeResult
+
+convertCHF:
+    fmul rateCHF
+
+storeResult:
+    fstp finalAmount  ; Store the final converted amount
+    ret
+ConvertCurrency ENDP
+
+DisplayFinalAmount PROC
+    mov edx, OFFSET finalAmount
+    call WriteFloat  ; Display converted amount
+    call Crlf
+    ret
+DisplayFinalAmount ENDP
 
 ;----------Future Value Calculation----------
 FutureValueCalculator PROC
+
+    call ClrScr
+
+    mov edx, OFFSET futureValueCalTitle
+    call WriteString
+
+    call Crlf
+    call Crlf
+
     ; Get Deposit Amount (in RM)
     mov edx, OFFSET promptDeposit
     call WriteString
@@ -509,6 +947,31 @@ print_sen:
     call WriteDec
     call Crlf
 
+    call ContinueRequest
+
+    ; Handle 'Y' or 'y'
+    mov al, byte ptr [continueOption] ; Load continueOption into AL
+    or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
+    cmp al, 'y'
+    je FutureValueCalculator                 ; If 'y' (or 'Y'), go to CheckAndWithdraw
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je ChooseAnotherFunction              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+ChooseAnotherFunction:
+    call RePerformFunction
+
+    ; Handle 'Y' or 'y' to go back to main menu
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
+    or al, 32
+    cmp al, 'y'
+    je DisplayMainMenu
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
 endProgram:
     exit
 
@@ -551,16 +1014,12 @@ PrintReceiptOption PROC
 
     call writeChar
     call Crlf
+    call Crlf
 
     ret
 PrintReceiptOption ENDP
 
-PrintReceipt PROC
-    
-PrintReceipt ENDP
-
 RePerformFunction PROC
-    call Crlf
     mov edx, OFFSET redoMessage
     call writeString
 
