@@ -42,6 +42,7 @@ INCLUDE Irvine32.inc
     promptWithdrawalAmount BYTE "Enter withdrawal amount: ", 0
     notSufficientBalance BYTE ">>> Insufficient balance amount! Please Enter again", 0
     confirmWithdraw BYTE "Confirm Withdrawal (Y/N)? ", 0
+    invalidWithdrawMessage BYTE ">>> Invalid withdrawal amount. Please enter a positive value.", 0
 
     ;--------Future Value Calculation------
     futureValueCalTitle BYTE "+---------Future Value Calculator---------+", 0
@@ -101,10 +102,12 @@ INCLUDE Irvine32.inc
     depositTitle BYTE "+---------Money Deposit---------+", 0
     getDeposit BYTE "Enter amount to deposit: ", 0
     confirmDeposit BYTE "Confirm deposit (Y/N)? ", 0
-    invalidDepositMessage BYTE "Invalid deposit amount. Please enter a positive value.", 0
+    invalidDepositMessage BYTE ">>> Invalid deposit amount. Please enter a positive value.", 0
     depositAmount DWORD ?         ; Stores deposit amount entered by user
 
-        ; Currency Selection
+    ;-------------Currency-------------
+    currecnyTitle BYTE "+---------Currency Conversion---------+", 0
+    ; Currency Selection
     currencyMenu BYTE "Select Currency:", 0
     option1 BYTE "1 - USD", 0
     option2 BYTE "2 - EUR", 0
@@ -131,13 +134,10 @@ INCLUDE Irvine32.inc
     rateCHF REAL4 0.92
 
     finalAmount REAL4 ?
-    
-    
 
 .CODE
 
 ;----------Functions Prototype----------
-
 PrintWelcome PROTO
 GetCCNum PROTO
 GetPinNum PROTO
@@ -145,13 +145,12 @@ CheckBalance PROTO
 ContinueRequest PROTO
 PrintReceiptOption PROTO
 FutureValueCalculator PROTO
-DepositMoney PROTO  ; New function for deposit
+DepositMoney PROTO 
 DisplayMainMenu PROTO
 RePerformFunction PROTO
 QuitProgram PROTO
 
 ;----------Main----------
-
 MAIN PROC
     call PrintWelcome
     call GetCardNum
@@ -164,7 +163,6 @@ MAIN ENDP
 
 
 ;----------Functions----------
-
 ;----------Print Welcome Message----------
 PrintWelcome PROC
     mov edx, OFFSET welcomeMessage  ; Load address of welcome message into EDX
@@ -176,28 +174,24 @@ PrintWelcome ENDP
 
 ;----------Get Credit Card Number----------
 GetCardNum PROC
+
     mov edx, OFFSET promptCard1
     call WriteString
-
     call ReadInt                    ; Read credit card number
     mov userCardInput1, eax          ; Store credit card number from eax to variable
 
     mov edx, OFFSET promptCard2
     call WriteString
-
     call readInt
     mov userCardInput2, eax
 
     mov eax, userCardInput1
     mov ebx, validCardInput1
-
     cmp eax, ebx         ; Compare user credit card number with valid credit card number
     jne InvalidCard                    ; Jump to 'isValidCC' label if equal
-
-    
+   
     mov eax, userCardInput2
     mov ebx, validCardInput2
-
     cmp eax, ebx 
     jne InvalidCard
 
@@ -251,17 +245,20 @@ DisplayMainMenu PROC
 DisplayMainMenu ENDP
 
 HandleMainMenu PROC
+    ; Display main menu message
     mov edx, OFFSET mainMenuMessage
-    call writeString
+    call WriteString
 
-    call readInt
+    ; Read user input
+    call ReadInt
     mov mainMenuChoice, eax
 
-    cmp mainMenuChoice,1 
+    ; Handle valid options
+    cmp mainMenuChoice, 1
     je DepositMoney
 
-    cmp mainMenuChoice, 2 
-    je withdrawMoney
+    cmp mainMenuChoice, 2
+    je WithdrawMoney
     
     cmp mainMenuChoice, 3
     je CheckBalance
@@ -273,29 +270,22 @@ HandleMainMenu PROC
     je FutureValueCalculator
 
     cmp mainMenuChoice, 6
-    ;je Rewards Points
+    ;je RewardPoints
 
     cmp mainMenuChoice, 7
     je QuitProgram
+
+; Invalid input - display error and return to menu
+InvalidInput:
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
     call Crlf
-    jg HandleMainMenu
-
-    cmp eax, 0
-    mov edx, OFFSET errorMessage
-    call WriteString
-    call Crlf
-    call Crlf
-    jle HandleMainMenu
-
-
-    call Crlf
-    call Crlf
+    jmp HandleMainMenu   ; Loop back to re-display the menu
 
     ret
 HandleMainMenu ENDP
+
 
 ;----------Deposit----------
 DepositMoney PROC
@@ -305,12 +295,10 @@ DepositMoney PROC
     call WriteString
 
     call Crlf
-
     call CheckBalance
 
-    call Crlf
-
 depositLoop:
+    call Crlf
     mov edx, OFFSET getDeposit
     call WriteString
 
@@ -340,11 +328,11 @@ makeConfirmationDeposit:
     je NotConfirmDeposit            ; If 'n', return to deposit loop
 
     ; Invalid input, re-prompt
+    mov edx, OFFSET errorMessage
+    call WriteString
     jmp makeConfirmationDeposit
 
 invalidDeposit:
-    call Crlf
-    call Crlf
     mov edx, OFFSET invalidDepositMessage
     call WriteString
     call Crlf
@@ -395,25 +383,31 @@ updateBalance:
 
 printCents:
     call WriteDec
-    call Crlf
 
 NotConfirmDeposit:
     ; Continue with next operation
     call ContinueRequest
 
+ValidateContinueInput:
     ; Handle 'Y' or 'y'
     mov al, byte ptr [continueOption] ; Load continueOption into AL
     or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
     cmp al, 'y'
-    je depositLoop                 ; If 'y' (or 'Y'), go to CheckAndWithdraw
+    je depositLoop                     ; If 'y' (or 'Y'), go to depositLoop
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
     je PrintReceiptRequest              ; If 'n' (or 'N'), go to PrintReceiptRequest
 
+    ; Invalid input, prompt again
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
+    jmp NotConfirmDeposit               ; Loop back and prompt again
+
 PrintReceiptRequest:
     call PrintReceiptOption
 
+ValidatePrintReceiptInput:
     ; Handle 'Y' or 'y' for receipt
     mov al, byte ptr [PrintOption] ; Load PrintReceiptOption into AL
     or al, 32
@@ -426,12 +420,18 @@ PrintReceiptRequest:
     cmp al, 'n'
     je ChooseAnotherFunction
 
+    ; Invalid input, prompt again
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
+    jmp PrintReceiptRequest               ; Loop back and prompt again
+
 PrintDepositReceipt:
     call ClrScr              ; Clear the screen for a fresh receipt view
 
     ; Print receipt header
     mov edx, OFFSET receiptHeader
     call WriteString
+    call GetLocalTime
 
     call Crlf
 
@@ -475,7 +475,6 @@ printDepositCents:
     mov edx, OFFSET receiptFooter
     call WriteString
     call Crlf                ; New line after balance
-    call Crlf
 
     mov depositTotal, 0
 
@@ -492,6 +491,12 @@ ChooseAnotherFunction:
     cmp al, 'n'
     je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
 
+ValidateAnotherFuncInput:
+   ; Invalid input, prompt again
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
+    jmp ChooseAnotherFunction               ; Loop back and prompt again
+
     ret
 DepositMoney ENDP
 
@@ -506,9 +511,9 @@ WithdrawMoney PROC
 
     call CheckBalance
 
-    call Crlf
 
 CheckAndWithdraw:
+    call Crlf
     ; Prompt user for withdrawal amount
     mov edx, OFFSET promptWithdrawalAmount
     call WriteString
@@ -517,6 +522,38 @@ CheckAndWithdraw:
     call ReadInt
     mov ebx, eax           ; Store withdrawal amount in EBX
 
+    cmp eax, 0
+    jl invalidWithdrawal
+
+makeConfirmationWithdrawal:
+    mov edx, OFFSET confirmWithdraw
+    call WriteString
+
+    ; Read user input (confirmation)
+    call ReadChar
+    or al, 32                 ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar            ; Echo the character
+
+    cmp al, 'y'
+    je UpdateBalance          ; If 'y', proceed to update balance
+
+    call Crlf
+
+    cmp al, 'n'
+    je CheckAndWithdraw            ; If 'n', return to deposit loop
+
+    ; Invalid input, re-prompt
+    mov edx, OFFSET errorMessage
+    call WriteString
+    jmp makeConfirmationWithdrawal
+
+invalidWithdrawal:
+    mov edx, OFFSET invalidWithdrawMessage
+    call WriteString
+    call Crlf
+    jmp CheckAndWithdraw
+
+UpdateBalance:
     add withdrawTotal, eax
 
     ; Convert withdrawal to cents (multiply by 100)
@@ -530,6 +567,9 @@ CheckAndWithdraw:
 
     ; Subtract withdrawal from balance
     sub balance, eax
+
+    call Crlf
+    call Crlf
 
     ; Display updated balance
     mov edx, OFFSET balanceMessage
@@ -554,10 +594,11 @@ CheckAndWithdraw:
 
 printCents:
     call WriteDec
-    call Crlf
 
+NotConfirmWithdraw:
     call ContinueRequest
 
+ValidateContinueInput:
     ; Handle 'Y' or 'y'
     mov al, byte ptr [continueOption] ; Load continueOption into AL
     or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
@@ -567,6 +608,11 @@ printCents:
     ; Handle 'N' or 'n'
     cmp al, 'n'
     je PrintReceiptRequest              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+    ; Invalid input, prompt again
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
+    jmp NotConfirmWithdraw               ; Loop back and prompt again
 
 PrintReceiptRequest:
     call PrintReceiptOption    ; Display the receipt prompt
@@ -582,6 +628,11 @@ PrintReceiptRequest:
     or al, 32
     cmp al, 'n'
     je ChooseAnotherFunction
+
+    ; Invalid input, prompt again
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
+    jmp PrintReceiptRequest               ; Loop back and prompt 
 
 PrintWithdrawalReceipt:
     call ClrScr              ; Clear the screen for a fresh receipt view
@@ -632,7 +683,6 @@ printWithdrawalCents:
     mov edx, OFFSET receiptFooter
     call WriteString
     call Crlf                ; New line after balance
-    call Crlf
 
     mov withdrawTotal, 0
 
@@ -648,6 +698,11 @@ ChooseAnotherFunction:
     ; Handle 'N' or 'n'
     cmp al, 'n'
     je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+    ; Invalid input, prompt again
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
+    jmp ChooseAnotherFunction               ; Loop back and prompt again
 
 InsufficientFunds:
     mov edx, OFFSET notSufficientBalance
@@ -735,6 +790,11 @@ CurrencyConversion PROC
 CurrencyConversion ENDP
 
 ChooseCurrency PROC
+    call ClrScr
+    mov edx, OFFSET currecnyTitle
+    call WriteString
+    call Crlf
+    call Crlf
     mov edx, OFFSET currencyMenu
     call WriteString
     call Crlf
@@ -945,7 +1005,6 @@ display_result:
 
 print_sen:
     call WriteDec
-    call Crlf
 
     call ContinueRequest
 
@@ -992,6 +1051,7 @@ QuitProgram ENDP
 ;----------Redo Process----------
 ContinueRequest PROC
     call Crlf
+    call Crlf
     mov edx, OFFSET continueMessage
     call writeString
 
@@ -1000,12 +1060,12 @@ ContinueRequest PROC
 
     call writeChar
     call Crlf
-    call Crlf
 
     ret
 ContinueRequest ENDP
 
 PrintReceiptOption PROC
+    call Crlf
     mov edx, OFFSET printRequestMessage
     call writeString
 
@@ -1014,12 +1074,12 @@ PrintReceiptOption PROC
 
     call writeChar
     call Crlf
-    call Crlf
 
     ret
 PrintReceiptOption ENDP
 
 RePerformFunction PROC
+    call Crlf
     mov edx, OFFSET redoMessage
     call writeString
 
