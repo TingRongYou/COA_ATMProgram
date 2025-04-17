@@ -30,7 +30,7 @@ INCLUDE Irvine32.inc
                     BYTE "3. Check Balance", 0Dh, 0Ah  
                     BYTE "4. Currency Conversion", 0Dh, 0Ah
                     BYTE "5. Future Value Calculation", 0Dh, 0Ah
-                    BYTE "6. Rewards Points", 0Dh, 0Ah
+                    BYTE "6. Rewards", 0Dh, 0Ah
                     BYTE "7. Exit", 0Dh, 0Ah, 0                   ;0 means null terminator, marking the end of the string 
 
     ;------------Handle Main Menu Choice----------
@@ -59,10 +59,6 @@ INCLUDE Irvine32.inc
     oneHundred        DWORD 100       ; Scaling factor for percentage calculations
     oneThousand       DWORD 1000      ; More precise scaling factor for division
 
-    ;------------Reward Points--------------
-    rewardPoints DWORD 0    ;Example of initial reward points
-    rewardPointsMessage BYTE "Reward Points: ", 0
-
     ;-------------Error Message-------------
     errorMessage BYTE ">>> Invalid option, Please try again!", 0
 
@@ -85,10 +81,10 @@ INCLUDE Irvine32.inc
                  BYTE "+--------------------------+", 0
 
     receiptDeposit BYTE "Money Deposited: RM", 0
-    DepositTotal DWORD ?
+    DepositTotal DWORD 0
 
     receiptWithdraw BYTE "Money Withdrawed: RM", 0
-    WithdrawTotal DWORD ?
+    WithdrawTotal DWORD 0
 
     receiptBalance BYTE "Balance: RM", 0
 
@@ -103,7 +99,7 @@ INCLUDE Irvine32.inc
     getDeposit BYTE "Enter amount to deposit: ", 0
     confirmDeposit BYTE "Confirm deposit (Y/N)? ", 0
     invalidDepositMessage BYTE ">>> Invalid deposit amount. Please enter a positive value.", 0
-    depositAmount DWORD ?         ; Stores deposit amount entered by user
+    depositAmount DWORD 0         ; Stores deposit amount entered by user
 
     ;-------------Currency-------------
     currecnyTitle BYTE "+---------Currency Conversion---------+", 0
@@ -135,6 +131,72 @@ INCLUDE Irvine32.inc
 
     finalAmount REAL4 ?
 
+    ;-------------Reward-------------
+    rewardTitle BYTE "+---------Reward Points---------+", 0
+    rewardRate DWORD 5
+    conversionFactor DWORD 10
+    rewardPoints DWORD 0
+    rewardPointsMessage BYTE "Reward Points: ", 0
+    points BYTE " points", 0
+
+    ;-------------Reward Menu-------------
+    rewardMenu BYTE  "+---------Reward Menu---------+", 0Dh, 0Ah
+                    BYTE "1. Redeem Points", 0Dh, 0Ah                     ;0Dh means carriage return
+                    BYTE "2. Estimate Future Points", 0Dh, 0Ah                   ;0Ah means linefeed
+                    BYTE "3. Back", 0Dh, 0Ah 
+                    BYTE "4. Exit", 0Dh, 0Ah, 0       
+    rewardMenuMsg BYTE "Enter your choice(1-4): ", 0
+    rewardMenuChoice DWORD ?
+
+    ;-------------Reward Points Menu-------------
+    redeemPointsMenu BYTE  "+---------Redeem Points---------+", 0Dh, 0Ah
+                    BYTE "1. Point to Money (10 points needed)", 0Dh, 0Ah                     ;0Dh means carriage return
+                    BYTE "2. Voucher Code (30 points needed)", 0Dh, 0Ah                   ;0Ah means linefeed
+                    BYTE "3. Back", 0Dh, 0Ah                   
+                    BYTE "4. Exit", 0Dh, 0Ah, 0 
+    redeemPointsMsg BYTE "Enter your choice(1-4): ", 0
+    redeemPointChoice DWORD ?
+    confirmRedeemMoney BYTE "Confirm redeeming points for money (Y/N)? ", 0
+    moneyRedeemSuccess BYTE ">>> Points redeemed successfully! Money credited to your account.", 0
+    moneyRedeemMsg BYTE ">>> Money redeemed: RM", 0
+    rewardPointsDeducted BYTE ">>> Points deducted: ", 0
+    moneyRedeemAmount DWORD 0
+    extraPointMsg1 BYTE ">>> Extra ", 0
+    extraPointMsg2 BYTE " points has be returned.", 0
+
+    ;-------------PointToMoney-------------
+    PointToMoneyMsg BYTE "How many points do you want to redeem?: ", 0
+    PointToMoneyAmount DWORD ?
+    leftoverPoints DWORD 0
+    insufficientRewardPoint BYTE ">>> Insufficient reward point. Please try again.", 0
+
+    ;-------------Voucher Code-------------
+    voucherCodeMenu BYTE  "+---------Voucher Code---------+", 0Dh, 0Ah
+                    BYTE "1. BACX2033 (Discount 30%)", 0Dh, 0Ah                     ;0Dh means carriage return
+                    BYTE "2. BADX3033 (Discount 30%)", 0Dh, 0Ah                   ;0Ah means linefeed
+                    BYTE "3. BAJG1020 (CashBack RM10)", 0Dh, 0Ah       
+                    BYTE "4. Back", 0Dh, 0Ah
+                    BYTE "5. Exit", 0Dh, 0Ah, 0 
+
+    voucherCodeMsg BYTE "Enter your choice(1-5): ", 0
+    voucherCodeChoice DWORD ?
+    voucherRedeemSuccess BYTE ">>> Voucher code redeemed successfully!", 0
+    voucherCode1 BYTE ">>> Voucher code: BACX2033 (Discount 30%)", 0
+    voucherCode2 BYTE ">>> Voucher code: BADX3033 (Discount 30%)", 0
+    voucherCode3 BYTE ">>> Voucher code: BAJG1020 (CashBack RM10)", 0
+    confirmVoucher BYTE "Confirm voucher code (Y/N)? ", 0
+
+    ;-------------Points Estimation-------------
+    futureEstimateTitle   BYTE "+---------Future Reward Estimator---------+", 0
+    promptMonthlyDeposit  BYTE "Enter estimated monthly deposit (RM): ", 0
+    promptMonths          BYTE "Enter number of months: ", 0
+    estimatedPointsMsg             BYTE ">>> Estimated reward points after that period: ", 0
+
+    monthlyDeposit        DWORD ?
+    numberOfMonths        DWORD ?
+    estimatedPoints       DWORD ?
+
+
 .CODE
 
 ;----------Functions Prototype----------
@@ -159,8 +221,6 @@ MAIN PROC
 
     EXIT         
 MAIN ENDP
-
-
 
 ;----------Functions----------
 ;----------Print Welcome Message----------
@@ -270,7 +330,7 @@ HandleMainMenu PROC
     je FutureValueCalculator
 
     cmp mainMenuChoice, 6
-    ;je RewardPoints
+    je Reward
 
     cmp mainMenuChoice, 7
     je QuitProgram
@@ -360,6 +420,14 @@ updateBalance:
     ; Add RM value to depositTotal
     add depositTotal, eax      ; Update depositTotal (in RM)
 
+    ; === Calculate Reward Points ===
+    ; rewardPoints = (depositTotal * rewardRate) / conversionFactor
+
+    mov eax, depositTotal       ; EAX = deposit RM
+    mul rewardRate        ; EAX = deposit RM * rewardRate
+    div conversionFactor        ; EAX = reward points
+    mov rewardPoints, eax       ; Store reward points
+
     ; === Step 4: Display updated balance message ===
     mov edx, OFFSET balanceMessage
     call WriteString
@@ -426,12 +494,13 @@ ValidatePrintReceiptInput:
     jmp PrintReceiptRequest               ; Loop back and prompt again
 
 PrintDepositReceipt:
-    call ClrScr              ; Clear the screen for a fresh receipt view
+    call ClrScr              ; Clear the screen for a fresh receipt 
+
+    call Crlf
 
     ; Print receipt header
     mov edx, OFFSET receiptHeader
     call WriteString
-    call GetLocalTime
 
     call Crlf
 
@@ -1037,6 +1106,427 @@ endProgram:
 FutureValueCalculator ENDP
 
 ;----------Reward Points----------
+Reward PROC
+
+    call ClrScr
+
+RewardMenuLoop:
+
+    mov edx, OFFSET rewardTitle
+    call writeString
+
+    call Crlf
+
+    mov edx, OFFSET rewardPointsMessage
+    call writeString
+
+    mov eax, rewardPoints
+    call writeDec
+
+    mov edx, OFFSET points
+    call writeString
+
+    call Crlf
+    call Crlf
+
+    mov edx, OFFSET rewardMenu
+    call writeString
+
+    mov edx, OFFSET rewardMenuMsg
+    call writeString
+
+    call readInt
+
+    mov rewardMenuChoice, eax
+
+    cmp rewardMenuChoice, 1
+    je RedeemPoints
+
+    cmp rewardMenuChoice, 2
+    je EstimateFutureRewards
+
+    cmp rewardMenuChoice, 3
+    je DisplayMainMenu
+
+    cmp rewardMenuChoice, 4
+    je QuitProgram
+
+InvalidInput:
+    mov edx, OFFSET errorMessage
+    call WriteString
+    call Crlf
+    call Crlf
+    jmp RewardMenuLoop   ; Loop back to re-display the menu
+
+    call Crlf
+
+RequestReperform:
+    call RePerformFunction
+
+    ; Handle 'Y' or 'y' to go back to main menu
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
+    or al, 32
+    cmp al, 'y'
+    je DisplayMainMenu
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+    ret
+Reward ENDP
+
+RedeemPoints PROC
+
+    call ClrScr
+
+RedeemMenuLoop:
+    mov edx, OFFSET redeemPointsMenu
+    call writeString
+
+    mov edx, OFFSET redeemPointsMsg
+    call writeString
+
+    call ReadInt
+    mov redeemPointChoice, eax
+
+    cmp redeemPointChoice, 1 
+    je pointToMoney
+
+    cmp redeemPointChoice, 2
+    je redeemVoucherCode
+
+    cmp redeemPointChoice, 3
+    je Reward
+
+    cmp redeemPointChoice, 4
+    je QuitProgram
+
+InvalidRedeemPointChoice:
+    mov edx, OFFSET errorMessage
+    call WriteString
+    call Crlf
+    call Crlf
+    jmp RedeemMenuLoop   ; Loop back to re-display the menu
+
+pointToMoney:
+
+    call Crlf
+
+getRedeemPointsLoop:
+    mov edx, OFFSET pointToMoneyMsg
+    call writeString
+
+    call ReadInt
+    mov pointToMoneyAmount, eax
+
+    mov eax, rewardPoints
+
+    cmp pointToMoneyAmount, eax
+    jbe makeConfirmationRedeemMoney
+
+    mov edx, OFFSET insufficientRewardPoint
+    call writeString
+    call Crlf
+    call Crlf
+    jmp getRedeemPointsLoop
+
+makeConfirmationRedeemMoney:
+    mov edx, OFFSET confirmRedeemMoney
+    call WriteString
+
+    ; Read user input (confirmation)
+    call ReadChar
+    or al, 32                 ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar            ; Echo the character
+
+    cmp al, 'y'
+    je DeductRewardPoints          ; If 'y', proceed to update balance
+
+    call Crlf
+
+    cmp al, 'n'
+    je NotConfirmRedeemMoney           ; If 'n', return to deposit loop
+
+    ; Invalid input, re-prompt
+    mov edx, OFFSET errorMessage
+    call WriteString
+    jmp makeConfirmationRedeemMoney
+
+DeductRewardPoints:
+    mov eax, pointToMoneyAmount
+    mov ecx, 10
+    xor edx, edx
+    div ecx                ; EAX = pointToCash / 10, EDX = pointToCash % 10
+    mov moneyRedeemAmount, eax
+    mov leftoverPoints, edx 
+    mov ecx, 100
+    mul ecx
+    add balance, eax
+
+    mov eax, rewardPoints
+    add eax, leftoverPoints
+    mov rewardPoints, eax
+
+    mov eax, rewardPoints
+    add eax, edx
+    mov rewardPoints, eax
+
+    mov eax, rewardPoints
+    sub eax, pointToMoneyAmount
+    mov rewardPoints, eax
+
+    call Crlf
+
+    mov edx, OFFSET moneyRedeemSuccess
+    call writeString
+
+    call Crlf
+
+    mov edx, OFFSET moneyRedeemMsg
+    call writeString
+    mov eax, moneyRedeemAmount
+    call writeDec
+    call Crlf
+    mov edx, OFFSET rewardPointsDeducted
+    call writeString
+    mov eax, pointToMoneyAmount
+    sub eax, leftoverPoints
+    call writeDec
+    mov edx, OFFSET points
+    call writeString
+
+    call Crlf
+
+    mov edx, OFFSET extraPointMsg1
+    call writeString
+    mov eax, leftoverPoints
+    call writeDec
+    mov edx, OFFSET extraPointMsg2
+    call writeString
+
+    jmp NotConfirmRedeemMoney
+
+NotConfirmRedeemMoney:
+	call ContinueRequest
+
+	; Handle 'Y' or 'y'
+	mov al, byte ptr [continueOption] ; Load continueOption into AL
+	or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
+	cmp al, 'y'
+	je getRedeemPointsLoop                 ; If 'y' (or 'Y'), go to CheckAndWithdraw
+
+	; Handle 'N' or 'n'
+	cmp al, 'n'
+	je requestReperform              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+redeemVoucherCode:
+
+	call ClrScr
+
+voucherMenuCodeLoop:
+	mov edx, OFFSET voucherCodeMenu
+    call writeString
+
+getVoucherCodeChoice:
+    mov edx, OFFSET voucherCodeMsg
+    call writeString
+
+    call ReadInt
+    mov voucherCodeChoice, eax
+
+    cmp voucherCodeChoice, 1
+    je redeemVoucher
+
+    cmp voucherCodeChoice, 2
+    je redeemVoucher
+
+    cmp voucherCodeChoice, 3
+    je redeemVoucher
+
+    cmp voucherCodeChoice, 4
+    je RedeemPoints
+
+    cmp voucherCodeChoice, 5
+    je QuitProgram
+
+InvalidVoucherCodeChoce:
+    mov edx, OFFSET errorMessage
+    call WriteString
+    call Crlf
+    call Crlf
+    jmp voucherMenuCodeLoop   ; Loop back to re-display the menu
+
+redeemVoucher:
+
+makeConfirmationRedeemVoucher:
+    mov edx, OFFSET confirmVoucher
+    call WriteString
+
+    ; Read user input (confirmation)
+    call ReadChar
+    or al, 32                 ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar            ; Echo the character
+
+    cmp al, 'y'
+    je updateRewardPoints          ; If 'y', proceed to update balance
+
+    call Crlf
+
+    cmp al, 'n'
+    je NotConfirmVoucher            ; If 'n', return to deposit loop
+
+    ; Invalid input, re-prompt
+    mov edx, OFFSET errorMessage
+    call WriteString
+    jmp makeConfirmationRedeemVoucher
+
+UpdateRewardPoints:
+    mov eax, rewardPoints
+    cmp eax, 30
+    jb notEnoughPoints
+
+	mov eax, rewardPoints
+    sub eax, 30
+    mov rewardPoints, eax
+
+    call Crlf
+
+    mov edx, OFFSET voucherRedeemSuccess
+    call writeString
+
+    call Crlf
+
+    cmp voucherCodeChoice, 1
+    je printVoucher1Code
+
+    cmp voucherCodeChoice, 2
+    je printVoucher2Code
+
+    cmp voucherCodeChoice, 3
+    je printVoucher3Code
+
+    jmp NotConfirmVoucher
+
+printVoucher1Code:
+    mov edx, OFFSET voucherCode1
+    call writeString
+    jmp NotConfirmVoucher
+
+printVoucher2Code:
+    mov edx, OFFSET voucherCode2
+    call writeString
+    jmp NotConfirmVoucher
+
+printVoucher3Code:
+    mov edx, OFFSET voucherCode3
+    call writeString
+    jmp NotConfirmVoucher
+
+NotConfirmVoucher:
+	call ContinueRequest
+
+	; Handle 'Y' or 'y'
+	mov al, byte ptr [continueOption] ; Load continueOption into AL
+	or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
+	cmp al, 'y'
+	je getVoucherCodeChoice                 ; If 'y' (or 'Y'), go to CheckAndWithdraw
+
+	; Handle 'N' or 'n'
+	cmp al, 'n'
+	je requestReperform              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+notEnoughPoints:
+	mov edx, OFFSET insufficientRewardPoint
+	call writeString
+	call Crlf
+	call Crlf
+	jmp voucherMenuCodeLoop
+
+RequestReperform:
+    call RePerformFunction
+
+    ; Handle 'Y' or 'y' to go back to main menu
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
+    or al, 32
+    cmp al, 'y'
+    je DisplayMainMenu
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+    ret
+
+RedeemPoints ENDP
+
+EstimateFutureRewards PROC
+    call ClrScr
+
+    mov edx, OFFSET futureEstimateTitle
+    call WriteString
+    call Crlf
+
+    ; Prompt for Monthly Deposit
+    mov edx, OFFSET promptMonthlyDeposit
+    call WriteString
+    call ReadInt
+    mov monthlyDeposit, eax     ; Store user's monthly deposit
+
+    ; Prompt for Number of Months
+    mov edx, OFFSET promptMonths
+    call WriteString
+    call ReadInt
+    mov numberOfMonths, eax     ; Store number of months
+
+    ; Calculate: monthlyDeposit / 10
+    mov eax, monthlyDeposit
+    mov ebx, 10
+    xor edx, edx
+    div ebx                     ; EAX = reward points per month
+
+    ; Multiply by numberOfMonths
+    mov ebx, numberOfMonths
+    mul ebx                     ; EAX = estimated future reward points
+
+    mov estimatedPoints, eax    ; Store in variable
+
+    ; Display result
+    mov edx, OFFSET estimatedPointsMsg
+    call WriteString
+    mov eax, estimatedPoints
+    call WriteDec
+    mov edx, OFFSET points
+    call WriteString
+
+    call ContinueRequest
+
+    ; Handle 'Y' or 'y'
+    mov al, byte ptr [continueOption] ; Load continueOption into AL
+    or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
+    cmp al, 'y'
+    je EstimateFutureRewards                 ; If 'y' (or 'Y'), go to CheckAndWithdraw
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je ChooseAnotherFunction              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+ChooseAnotherFunction:
+    call RePerformFunction
+
+    ; Handle 'Y' or 'y' to go back to main menu
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
+    or al, 32
+    cmp al, 'y'
+    je DisplayMainMenu
+
+    ; Handle 'N' or 'n'
+    cmp al, 'n'
+    je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
+
+    ret
+EstimateFutureRewards ENDP
+
 
 QuitProgram PROC
     call ClrScr
