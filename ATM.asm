@@ -44,11 +44,6 @@ INCLUDE Irvine32.inc
     confirmWithdraw BYTE "Confirm Withdrawal (Y/N)? ", 0
     invalidWithdrawMessage BYTE ">>> Invalid withdrawal amount. Please enter a positive value.", 0
 
-    ;-------------Withdrawal With Billing---------------
-    promptWithdraw BYTE "Enter amount to withdraw: ", 0
-    insufficientFundsMessage BYTE "Insufficient balance.", 0
-    withdrawSuccessMessage BYTE "Please collect your cash:", 0
-
     bill100Msg BYTE "RM100 bills: ", 0
     bill50Msg BYTE "RM50 bills: ", 0
     bill20Msg BYTE "RM20 bills: ", 0
@@ -56,7 +51,6 @@ INCLUDE Irvine32.inc
     bill5Msg  BYTE "RM5 bills: ", 0
     bill1Msg  BYTE "RM1 bills: ", 0
 
-    withdrawAmount DWORD ?
     bill100 DWORD ?
     bill50 DWORD ?
     bill20 DWORD ?
@@ -632,7 +626,7 @@ CheckAndWithdraw:
 
     ; Read the withdrawal amount (in RM)
     call ReadInt
-    mov ebx, eax           ; Store withdrawal amount in EBX
+    mov withdrawalAmount, eax           ; Store withdrawal amount in EBX
 
     cmp eax, 0
     jl invalidWithdrawal
@@ -666,10 +660,11 @@ invalidWithdrawal:
     jmp CheckAndWithdraw
 
 UpdateBalance:
+    mov eax, withdrawalAmount     ; Load withdrawal amount (in cents)
     add withdrawTotal, eax
 
     ; Convert withdrawal to cents (multiply by 100)
-    mov eax, ebx
+    mov eax, withdrawalAmount
     mov ecx, 100
     mul ecx                ; EAX = withdrawal * 100 (in cents)
 
@@ -792,6 +787,89 @@ printWithdrawalCents:
     mov eax, edx
     call WriteDec
     call Crlf
+
+     ; Start bill breakdown
+    mov eax, withdrawTotal
+
+    ; RM100 bills
+    mov ebx, 100
+    xor edx, edx
+    div ebx
+    mov bill100, eax
+    mov eax, edx
+
+    ; RM50 bills
+    mov ebx, 50
+    xor edx, edx
+    div ebx
+    mov bill50, eax
+    mov eax, edx
+
+    ; RM20 bills
+    mov ebx, 20
+    xor edx, edx
+    div ebx
+    mov bill20, eax
+    mov eax, edx
+
+    ; RM10 bills
+    mov ebx, 10
+    xor edx, edx
+    div ebx
+    mov bill10, eax
+    mov eax, edx
+
+    ; RM5 bills
+    mov ebx, 5
+    xor edx, edx
+    div ebx
+    mov bill5, eax
+    mov eax, edx
+
+    ; RM1 bills
+    mov bill1, eax
+
+    mov edx, OFFSET receiptFooter
+    call WriteString
+    call Crlf
+
+    ; Output each bill count
+    mov edx, OFFSET bill100Msg
+    call WriteString
+    mov eax, bill100
+    call WriteDec
+    call Crlf
+
+    mov edx, OFFSET bill50Msg
+    call WriteString
+    mov eax, bill50
+    call WriteDec
+    call Crlf
+
+    mov edx, OFFSET bill20Msg
+    call WriteString
+    mov eax, bill20
+    call WriteDec
+    call Crlf
+
+    mov edx, OFFSET bill10Msg
+    call WriteString
+    mov eax, bill10
+    call WriteDec
+    call Crlf
+
+    mov edx, OFFSET bill5Msg
+    call WriteString
+    mov eax, bill5
+    call WriteDec
+    call Crlf
+
+    mov edx, OFFSET bill1Msg
+    call WriteString
+    mov eax, bill1
+    call WriteDec
+    call Crlf
+
     mov edx, OFFSET receiptFooter
     call WriteString
     call Crlf                ; New line after balance
