@@ -19,7 +19,4 @@
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="account.txt" />
-  </ItemGroup>
 </Project>
