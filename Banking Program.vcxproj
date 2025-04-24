@@ -135,6 +135,9 @@
   <ItemGroup>
     <MASM Include="ATM.asm" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="account.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
