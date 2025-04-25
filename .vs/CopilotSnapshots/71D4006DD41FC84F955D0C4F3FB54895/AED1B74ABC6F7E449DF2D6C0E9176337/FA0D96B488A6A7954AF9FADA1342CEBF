@@ -1,15 +1,11 @@
-INCLUDE Irvine32.inc
+ï»¿INCLUDE Irvine32.inc
 
 .DATA
-            ;==================================
-            ;||    Welcome & Exit Message    ||  
-            ;==================================
+    ;-----------Welcome & Exit Message-----------
     welcomeMessage BYTE "+-----Welcome to PREMIER ATM SYSTEM!-----+", 0  
     exitMessage BYTE "+-----Thanks for using PREMIER ATM SYSTEM, have a nice day!-----+", 0
 
-           ;===================================
-           ;||     Date and Time Variables   ||
-           ;===================================
+    ;-----------Date and Time Variables-----------
     sysTime SYSTEMTIME <>         ; To store the current date/time
     msg1 BYTE "Current Date and Time (24-Hour Format): ", 0
     colon BYTE ":", 0
@@ -19,9 +15,7 @@ INCLUDE Irvine32.inc
     goodAfternoonMsg BYTE "Good Afternoon! ", 0    ; Message for afternoon
     goodNightMsg BYTE "Good Night! ", 0             ; Message for night
 
-        ;=====================================
-        ;||     Variable for GetCardNum     ||
-        ;=====================================
+    ;-----------Variable for GetCardNum------------
     promptCard1 BYTE "Enter first 8-digit credit card number: ", 0
     promptCard2 BYTE "Enter second 8-digit credit card number: ", 0
     userCardInput1 DWORD ?
@@ -31,9 +25,7 @@ INCLUDE Irvine32.inc
     validCCMessage BYTE ">>> Valid Credit Card!", 0
     invalidCCMessage BYTE ">>> Invalid Credit Card!", 0
 
-        ;==============================
-        ;||  Variable for GetPinNum  ||
-        ;==============================
+    ;-----------Variable for GetPinNum------------
     promptPin BYTE "Enter your PIN Number: ", 0
     userPinInput DWORD ?
     validPinInput DWORD 718111
@@ -41,9 +33,7 @@ INCLUDE Irvine32.inc
     invalidPinMessage BYTE ">>> Invalid PIN Number!", 0
     asterisk BYTE "*", 0
 
-        ;==================
-        ;||  Main Menu   ||
-        ;==================
+    ;------------Main Menu-------------
     accessGranted BYTE ">>> Access Granted! Please enjoy using our system!", 0Dh, 0Ah, 0
     mainMenuOptions BYTE "+---------Main Menu---------+", 0Dh, 0Ah
                     BYTE "1. Deposit", 0Dh, 0Ah                     ;0Dh means carriage return
@@ -54,15 +44,11 @@ INCLUDE Irvine32.inc
                     BYTE "6. Rewards", 0Dh, 0Ah
                     BYTE "7. Exit", 0Dh, 0Ah, 0                   ;0 means null terminator, marking the end of the string 
 
-        ;==========================
-        ;||Handle Main Menu Choice||
-        ;==========================
+    ;------------Handle Main Menu Choice----------
     mainMenuMessage BYTE "Enter your choice(1-7): ", 0
     mainMenuChoice DWORD ?
 
-        ;=================
-        ;|| Withdrawal  ||
-        ;=================
+    ;-------------Withdrawal---------------
     withdrawTitle BYTE "+---------Money Withdrawal---------+", 0
     promptWithdrawalAmount BYTE "Enter withdrawal amount: ", 0
     notSufficientBalance BYTE ">>> Insufficient balance amount! Please Enter again", 0
@@ -84,9 +70,7 @@ INCLUDE Irvine32.inc
     bill5 DWORD ?
     bill1 DWORD ?
 
-        ;=====================================
-        ;||     Future Value Calculation    ||
-        ;=====================================
+    ;--------Future Value Calculation------
     futureValueCalTitle BYTE "+---------Future Value Calculator---------+", 0
     promptDeposit     BYTE "Enter yearly regular deposit (RM): ", 0
     promptRate        BYTE "Enter annual interest rate (%) [1% / 2% ...] : ", 0
@@ -103,34 +87,24 @@ INCLUDE Irvine32.inc
     oneHundred        DWORD 100       ; Scaling factor for percentage calculations
     oneThousand       DWORD 1000      ; More precise scaling factor for division
 
-        ;=====================
-        ;|| Error Message   ||
-        ;=====================
+    ;-------------Error Message-------------
     errorMessage BYTE ">>> Invalid option, Please try again!", 0
 
-        ;=============
-        ;|| Balance ||
-        ;=============
+    ;-------------Balance-------------
     checkBalanceTitle BYTE "+---------Check Balance---------+", 0
     balanceMessage BYTE ">>> Your current account balance are: ", 0
     balanceUnit BYTE "RM", 0
     balance DWORD 12345678 
 
-        ;=================
-        ;|| Continue?   ||
-        ;=================
+    ;-------------Continue?-------------
     continueMessage BYTE "Do you want to continue(y/n)?: ", 0
     continueOption BYTE ?
 
-        ;=====================
-        ;|| Print Receipt?  ||
-        ;=====================
+    ;-------------Print Receipt?-------------
     printRequestMessage BYTE "Do you want to print receipt(y/n)?: ", 0
     printOption BYTE ?
 
-        ;=============
-        ;|| Receipt ||
-        ;=============
+    ;-------------Receipt-------------
     receiptHeader BYTE "+--------------------------+", 0Dh, 0Ah
                  BYTE "   PREMIER ATM RECEIPT", 0Dh, 0Ah
                  BYTE "+--------------------------+", 0
@@ -146,24 +120,18 @@ INCLUDE Irvine32.inc
     receiptFooter BYTE "+--------------------------+", 0
     spacingToRight BYTE "          ", 0  
 
-        ;=============================
-        ;|| Reperform Any Function? ||
-        ;=============================
+    ;-------------Reperform Any Function?-------------
     redoMessage BYTE "Do you want to perform any other functions(y/n)?: ", 0
     redoOption BYTE ?
 
-        ;=============
-        ;|| Deposit ||
-        ;=============
+    ;-------------Deposit-------------
     depositTitle BYTE "+---------Money Deposit---------+", 0
     getDeposit BYTE "Enter amount to deposit: ", 0
     confirmDeposit BYTE "Confirm deposit (Y/N)? ", 0
     invalidDepositMessage BYTE ">>> Invalid deposit amount. Please enter a positive value.", 0
     depositAmount DWORD 0         ; Stores deposit amount entered by user
 
-        ;==============
-        ;||  Reward  ||
-        ;==============
+    ;-------------Reward-------------
     rewardTitle BYTE "+---------Reward Points---------+", 0
     rewardRate DWORD 5
     conversionFactor DWORD 10
@@ -173,9 +141,7 @@ INCLUDE Irvine32.inc
     rewardMessage   db "Your current reward points: ", 0
     currentPointsMsg db "Points: ", 0
 
-       ;=================
-       ;|| Reward Menu ||
-       ;=================
+    ;-------------Reward Menu-------------
     rewardMenu BYTE  "+---------Reward Menu---------+", 0Dh, 0Ah
                     BYTE "1. Redeem Points", 0Dh, 0Ah                     ;0Dh means carriage return
                     BYTE "2. Estimate Future Points", 0Dh, 0Ah                   ;0Ah means linefeed
@@ -184,9 +150,7 @@ INCLUDE Irvine32.inc
     rewardMenuMsg BYTE "Enter your choice(1-4): ", 0
     rewardMenuChoice DWORD ?
 
-       ;=========================
-       ;|| Reward Points Menu  ||
-       ;=========================
+    ;-------------Reward Points Menu-------------
     redeemPointsMenu BYTE  "+---------Redeem Points---------+", 0Dh, 0Ah
                     BYTE "1. Point to Money (10 points needed)", 0Dh, 0Ah                     ;0Dh means carriage return
                     BYTE "2. Voucher Code (30 points needed)", 0Dh, 0Ah                   ;0Ah means linefeed
@@ -202,17 +166,13 @@ INCLUDE Irvine32.inc
     extraPointMsg1 BYTE ">>> Extra ", 0
     extraPointMsg2 BYTE " points has be returned.", 0
 
-       ;=====================
-       ;||  PointToMoney   ||
-       ;=====================
+    ;-------------PointToMoney-------------
     PointToMoneyMsg BYTE "How many points do you want to redeem?: ", 0
     PointToMoneyAmount DWORD ?
     leftoverPoints DWORD 0
     insufficientRewardPoint BYTE ">>> Insufficient reward point. Please try again.", 0
 
-        ;=====================
-        ;|| Voucher Code    ||
-        ;=====================
+    ;-------------Voucher Code-------------
     voucherCodeMenu BYTE  "+---------Voucher Code---------+", 0Dh, 0Ah
                     BYTE "1. BACX2033 (Discount 30%)", 0Dh, 0Ah                     ;0Dh means carriage return
                     BYTE "2. BADX3033 (Discount 30%)", 0Dh, 0Ah                   ;0Ah means linefeed
@@ -228,9 +188,7 @@ INCLUDE Irvine32.inc
     voucherCode3 BYTE ">>> Voucher code: BAJG1020 (CashBack RM10)", 0
     confirmVoucher BYTE "Confirm voucher code (Y/N)? ", 0
 
-        ;=========================
-        ;|| Points Estimation   ||
-        ;=========================
+    ;-------------Points Estimation-------------
     futureEstimateTitle   BYTE "+---------Future Reward Estimator---------+", 0
     promptMonthlyDeposit  BYTE "Enter estimated monthly deposit (RM): ", 0
     promptMonths          BYTE "Enter number of months: ", 0
@@ -240,10 +198,10 @@ INCLUDE Irvine32.inc
     numberOfMonths        DWORD ?
     estimatedPoints       DWORD ?
 
-        ;====================
-        ;||    Currency    ||
-        ;====================
+     ;-------------Currency-------------
+    ; Display Currency Title 
     currencyTitle BYTE "+---------Currency Conversion---------+", 0
+    ; Currency Selection
     currencyMenuText BYTE "Select Currency:" ,0Dh,0Ah
                      BYTE "1 - USD" ,0Dh,0Ah
                      BYTE "2 - EUR" ,0Dh,0Ah
@@ -252,14 +210,17 @@ INCLUDE Irvine32.inc
                      BYTE "5 - AUD" ,0Dh,0Ah
                      BYTE "6 - Back to Main Menu", 0Dh,0Ah,0
     
+    ; Get currency choice from user
     promptCurrency BYTE "Enter your currency type (1-6): ", 0
     chosenCurrency DWORD ?
     currencyCents  DWORD 0
 
+    ; Messages (you need to define these)
     mainMenuMessage2 BYTE "Back at main menu...", 0
     errorMessage2 BYTE "Invalid input. Please try again.", 0
     insufficientFundsMessage BYTE "Insufficient funds for this conversion. Please enter a smaller amount.",0
 
+     ; Withdrawal Amount
     promptAmount BYTE "Enter withdrawal amount: ", 0
     withdrawalAmount DWORD ?
     
@@ -281,22 +242,82 @@ INCLUDE Irvine32.inc
     TotalAmountJPY DWORD 0
     TotalAmountAUD DWORD 0
 
+    ;Unit for currency
     USDUnit BYTE " USD",0
     EURUnit BYTE " EUR",0
     GBPUnit BYTE " GBP",0
     JPYUnit BYTE " JPY",0
     AUDUnit BYTE " AUD",0
     
+    ; Exchange Rates (Relative to Local Currency)
     rateUSD DWORD 15
     rateEUR DWORD 8
     rateGBP DWORD 10
     rateJPY DWORD 4
     rateAUD DWORD 6
 
+    initialMenuOptions BYTE "+---------Initial Menu---------+", 0Dh, 0Ah
+                          BYTE "1. Register", 0Dh, 0Ah
+                          BYTE "2. Login", 0Dh, 0Ah
+                          BYTE "3. Exit", 0Dh, 0Ah, 0
+    initialMenuPrompt BYTE "Enter your choice (1-3): ", 0
+    registerPrompt BYTE "Register a new account:", 0
+    usernamePrompt BYTE "Enter username: ", 0
+    cardPart1Prompt BYTE "Enter first 8-digit card number: ", 0
+    cardPart2Prompt BYTE "Enter second 8-digit card number: ", 0
+    pinPrompt BYTE "Enter 6-digit PIN: ", 0
+    balancePrompt BYTE "Enter initial balance: ", 0
+    registerSuccess BYTE "Registration successful!", 0
+    registerFailed BYTE "Registration failed. Please try again.", 0
+    loginPrompt BYTE "Login to your account:", 0
+    loginSuccess BYTE "Login successful!", 0
+    loginFailed BYTE "Login failed. Invalid credentials.", 0
+
+    initialMenuOptions BYTE "+---------Initial Menu---------+", 0Dh, 0Ah
+                          BYTE "1. Register", 0Dh, 0Ah
+                          BYTE "2. Login", 0Dh, 0Ah
+                          BYTE "3. Exit", 0Dh, 0Ah, 0
+    initialMenuPrompt BYTE "Enter your choice (1-3):InitialMenu PROTO
+Register PROTO
+Login PROTO
+WriteToFile PROTO
+ ", 0
+    registerPrompt BYTE "Register a new account:", 0
+    usernamePrompt BY    call InitialMenu
+igit card number: ", 0
+    cardPart2Prompt BYTE "Enter second 8-digit card number: ", 0
+    pinPrompt BYTE "Enter 6-digit PIN: ", 0
+    balancePrompt BYTE "Enter initial balance: ", 0
+    registerSuccess BYTE "Registration successful!", 0
+    registerFailed BYTE "Registration failed. Please try again.", 0
+    loginPrompt BYTE "Login to your account:", 0
+    loginSuccess BYTE "Login successful!", 0
+    loginFailed BYTE "Login failed. Invalid credentials.", 0
+
+    initialMenuOptions BYTE "+---------Initial Menu---------+", 0Dh, 0Ah
+                          BYTE "1. Register", 0Dh, 0Ah
+                          BYTE "2. Login", 0Dh, 0Ah
+                          BYTE "3. Exit", 0Dh, 0Ah, 0
+    initialMenuPrompt BYTE "Enter your choice (1-3):InitialMenu PROTO
+Register PROTO
+Login PROTO
+WriteToFile PROTO
+ ", 0
+    registerPrompt BYTE "Register a new account:", 0
+    usernamePrompt BY    call InitialMenu
+igit card number: ", 0
+    cardPart2Prompt BYTE "Enter second 8-digit card number: ", 0
+    pinPrompt BYTE "Enter 6-digit PIN: ", 0
+    balancePrompt BYTE "Enter initial balance: ", 0
+    registerSuccess BYTE "Registration successful!", 0
+    registerFailed BYTE "Registration failed. Please try again.", 0
+    loginPrompt BYTE "Login to your account:", 0
+    loginSuccess BYTE "Login successful!", 0
+    loginFailed BYTE "Login failed. Invalid credentials.", 0
+
 .CODE
-   ;_____________________________
-   ;     Functions Prototype    |     
-   ;_____________________________
+
+;----------Functions Prototype----------
 PrintWelcome PROTO
 GetCCNum PROTO
 GetPinNum PROTO
@@ -308,27 +329,22 @@ DepositMoney PROTO
 DisplayMainMenu PROTO
 RePerformFunction PROTO
 QuitProgram PROTO
+InitialMenu PROTO
+Register PROTO
+Login PROTO
+WriteToFile PROTO
 
-    ;+----------------------------------+
-    ;|              Main                |
-    ;-----------------------------------+
+;----------Main----------
 MAIN PROC
     call PrintWelcome
     call DateTime
-    call GetCardNum
-    call GetPinNum
-    call DisplayMainMenu
+    call InitialMenu
 
     EXIT         
 MAIN ENDP
 
-    ;+---------------------------+
-    ;|          Functions        |
-    ;+---------------------------+
-
-    ;+----------------------------------------+
-    ;|          Print Welcome Message         |
-    ;+----------------------------------------+
+;----------Functions----------
+;----------Print Welcome Message----------
 PrintWelcome PROC
     mov eax, lightCyan             ; Set text color (choose your color)
     call SetTextColor
@@ -345,86 +361,79 @@ PrintWelcome PROC
     ret
 PrintWelcome ENDP
 
-    ;+----------------------------------------+
-    ;|           Display Date and Time        |
-    ;---------------------------------------- +
+
+
+;----------Display Date and Time----------
 DateTime PROC
-    LOCAL originalColor:DWORD       
+    LOCAL originalColor:DWORD
 
     call GetTextColor
     mov originalColor, eax
 
     ; Display the message
     mov edx, OFFSET msg1
-    call WriteString                
+    call WriteString
     call Crlf
 
     ; Get the current system time
     INVOKE GetLocalTime, ADDR sysTime
 
     ; ==== Print YYYY-MM-DD ====
-    mov eax, lightGray
-    call SetTextColor
-    movzx eax, sysTime.wYear        
+    movzx eax, sysTime.wYear
     call WriteDec
-    mov edx, OFFSET dash            ;add dash between year and month
+    mov edx, OFFSET dash
     call WriteString
 
     movzx eax, sysTime.wMonth
     call WriteDec
-    mov edx, OFFSET dash            ;add dash between month and day
+    mov edx, OFFSET dash
     call WriteString
 
     movzx eax, sysTime.wDay
     call WriteDec
-    mov edx, OFFSET space           ;add space between date and time
+    mov edx, OFFSET space
     call WriteString
 
     ; ==== Print HH:MM:SS ====
     movzx eax, sysTime.wHour
     call WriteDec
-    mov edx, OFFSET colon           ;add colon between hour and minute
+    mov edx, OFFSET colon
     call WriteString
 
     movzx eax, sysTime.wMinute
     call WriteDec
-    mov edx, OFFSET colon           ;add colon between minute and second
+    mov edx, OFFSET colon
     call WriteString
 
     movzx eax, sysTime.wSecond
-    call WriteDec                   ;add second
+    call WriteDec
     call Crlf
 
     ; ==== Greeting Based on Time ====
     movzx eax, sysTime.wHour
 
     cmp eax, 5
-    jl GoodNight                    ; 00:00 – 04:59
+    jl GoodNight           ; 00:00 â€“ 04:59
 
     cmp eax, 12
-    jl GoodMorning                  ; 05:00 – 11:59
+    jl GoodMorning         ; 05:00 â€“ 11:59
 
     cmp eax, 20
-    jl GoodAfternoon                ; 12:00 – 19:59
+    jl GoodAfternoon       ; 12:00 â€“ 19:59
 
-    jmp GoodNight                   ; 20:00 – 23:59
+    jmp GoodNight          ; 20:00 â€“ 23:59
 
 GoodMorning:
-    mov eax, lightBlue
-    call SetTextColor
-    mov edx, OFFSET goodMorningMsg  
+    mov edx, OFFSET goodMorningMsg
     call WriteString
     jmp EndDateTime
 
 GoodAfternoon:
-    mov eax, Cyan
     mov edx, OFFSET goodAfternoonMsg
     call WriteString
     jmp EndDateTime
 
 GoodNight:
-    mov eax, blue
-    call SetTextColor
     mov edx, OFFSET goodNightMsg
     call WriteString
 
@@ -434,14 +443,13 @@ EndDateTime:
     call Crlf
     call Crlf
     ret
+
 DateTime ENDP
 
-    ;+------------------------------------------------+
-    ;|           Display Receipt Date and Time        |
-    ;-------------------------------------------------+
 ReceiptDateTime PROC
     LOCAL originalColor:DWORD
     
+    ; Save original text color
     call GetTextColor
     mov originalColor, eax
     
@@ -531,9 +539,8 @@ printSecond:
     ret
 ReceiptDateTime ENDP
 
-    ;+-----------------------------------------+
-    ;|           Get Credit Card Number        |
-    ;------------------------------------------+
+
+;----------Get Credit Card Number----------
 GetCardNum PROC
     LOCAL originalColor:DWORD
     ; Store the original text color
@@ -600,9 +607,7 @@ InvalidCard:
     jmp GetCardNum
 GetCardNum ENDP
 
-    ;+---------------------------------+
-    ;|           Get PIN Number        |
-    ;----------------------------------+
+;----------Get PIN Number----------
 GetPinNum PROC
     LOCAL digitCount:DWORD       ; Local variable for digit count
     
@@ -703,15 +708,15 @@ CheckPin:
     pop eax                      ; Get original color from stack
     call SetTextColor            ; Restore original color
     
-    call Crlf                    
+    call Crlf                    ; New line after PIN input
     
     ; Compare entered PIN with valid PIN
     mov eax, userPinInput
     cmp eax, validPinInput
     je isValidPin                ; Jump if PIN is valid
     
-    mov eax, lightRed          
-    call SetTextColor            
+    mov eax, lightRed          ; Set text color to red for error message
+    call SetTextColor            ; Change text color to red
     mov edx, OFFSET invalidPinMessage
     call WriteString
     call Crlf
@@ -723,7 +728,7 @@ CheckPin:
     xor eax, eax
     mov userPinInput, eax
 
-    jmp GetPinNum                
+    jmp GetPinNum                ; Try again
     
 isValidPin:
     mov eax, lightGreen          
@@ -734,10 +739,10 @@ isValidPin:
     call Crlf
     
     ; Store success status or call the next procedure
-    mov eax, 1                     ; Set success status code
+    mov eax, 1                   ; Set success status code
 
     mov eax, white
-    call SetTextColor           
+    call SetTextColor            ; Reset text color to white
     call WaitMsg
     
      call DisplayMainMenu          ; Call the main menu procedure
@@ -745,20 +750,18 @@ isValidPin:
       
 GetPinNum ENDP
 
-    ;+-------------------------------------+
-    ;|           Display Main Menu         |
-    ;--------------------------------------+
+;----------Display Main Menu-----------
 DisplayMainMenu PROC
    call Clrscr
     
     ; Set text color to green
-    mov eax, lightGreen          
-    call SetTextColor            
+    mov eax, lightGreen          ; Set the desired color to green
+    call SetTextColor            ; Apply the green color
     
     ; Display the message
-    mov edx, OFFSET accessGranted  
-    call WriteString             
-    call Crlf                   
+    mov edx, OFFSET accessGranted  ; Load the address of the message into EDX
+    call WriteString             ; Display the message on the screen
+    call Crlf                   ; Move to the next line
 
     mov eax, white
     call SetTextColor
@@ -805,6 +808,7 @@ HandleMainMenu PROC
     cmp mainMenuChoice, 7
     je QuitProgram
 
+; Invalid input - display error and return to menu
 InvalidInput:
     mov eax, lightRed
     call SetTextColor
@@ -812,14 +816,13 @@ InvalidInput:
     call WriteString
     call Crlf
     call Crlf
-    jmp HandleMainMenu   
+    jmp HandleMainMenu   ; Loop back to re-display the menu
 
     ret
 HandleMainMenu ENDP
 
-    ;+---------------------------------+
-    ;|             Deposit             |    
-    ;----------------------------------+
+
+;----------Deposit----------
 DepositMoney PROC
     call Clrscr
 
@@ -844,11 +847,11 @@ depositLoop:
     call SetTextColor
     call ReadInt
     mov ecx, 100
-    mul ecx                         ; EAX = deposit * 100 (in cents)
+    mul ecx                ; EAX = deposit * 100 (in cents)
     mov depositAmount, eax
 
     cmp eax, 0
-    jle invalidDeposit              ; If deposit is <= 0, prompt again
+    jle invalidDeposit  ; If deposit is <= 0, prompt again
 
 makeConfirmationDeposit:
     mov eax, white
@@ -860,16 +863,16 @@ makeConfirmationDeposit:
     mov eax, lightGreen
     call SetTextColor
     call ReadChar
-    or al, 32                       ; Convert to lowercase (handles 'Y' and 'y')
-    call WriteChar            
+    or al, 32                 ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar            ; Echo the character
 
     cmp al, 'y'
-    je updateBalance                ; If 'y', proceed to update balance
+    je updateBalance          ; If 'y', proceed to update balance
 
     call Crlf
 
     cmp al, 'n'
-    je NotConfirmDeposit            ; If 'n', return to deposit loop
+    je NotConfirmDeposit      ; If 'n', return to deposit loop
 
     ; Invalid input, re-prompt
     mov eax, lightRed
@@ -890,30 +893,28 @@ invalidDeposit:
 
 updateBalance:
     ; === Step 1: Add deposit amount to current balance (both in cents) ===
-
-    mov eax, balance                ; Load current balance (in cents)
-    add eax, depositAmount          ; Add deposit amount (in cents)
-    mov balance, eax                ; Store the updated balance
+    mov eax, balance         ; Load current balance (in cents)
+    add eax, depositAmount   ; Add deposit amount (in cents)
+    mov balance, eax         ; Store the updated balance
 
     call Crlf
     call Crlf
 
     ; Convert depositAmount (in cents) to RM for depositTotal calculation
-    mov eax, depositAmount          ; Load deposit amount (in cents)
+    mov eax, depositAmount     ; Load deposit amount (in cents)
     mov ecx, 100
-    xor edx, edx                    ; Clear upper part for division
-    div ecx                         ; EAX = RM part, EDX = remaining cents
+    xor edx, edx               ; Clear upper part for division
+    div ecx                    ; EAX = RM part, EDX = remaining cents
 
     ; Add RM value to depositTotal
-    add depositTotal, eax           ; Update depositTotal (in RM)
+    add depositTotal, eax      ; Update depositTotal (in RM)
 
     ; === Calculate Reward Points ===
     ; rewardPoints = (depositTotal * rewardRate) / conversionFactor
-
-    mov eax, depositTotal           ; EAX = deposit RM
-    mul rewardRate                  ; EAX = deposit RM * rewardRate
-    div conversionFactor            ; EAX = reward points
-    mov rewardPoints, eax           ; Store reward points
+    mov eax, depositTotal       ; EAX = deposit RM
+    mul rewardRate              ; EAX = deposit RM * rewardRate
+    div conversionFactor        ; EAX = reward points
+    mov rewardPoints, eax       ; Store reward points
 
     ; === Step 4: Display updated balance message ===
     mov eax, white
@@ -927,27 +928,27 @@ updateBalance:
     call WriteString
 
     ; Display current balance (in RM.cents format)
-    mov eax, balance                ; Get total balance in cents
+    mov eax, balance           ; Get total balance in cents
     mov ecx, 100
     xor edx, edx
-    div ecx                         ; EAX = integer part (RM), EDX = cents
+    div ecx                    ; EAX = integer part (RM), EDX = cents
 
     ; Print integer part (RM)
-    call WriteDec                   ; Print the RM value
+    call WriteDec              ; Print the RM value
 
     ; Print decimal point and cents
     mov al, '.'
     call WriteChar
     
     ; Handle cents display properly with leading zero if needed
-    mov eax, edx                     ; Move cents to EAX for display
+    mov eax, edx               ; Move cents to EAX for display
     cmp eax, 10
     jge printCents
-    mov al, '0'                      ; Add leading zero for cents < 10
+    mov al, '0'                ; Add leading zero for cents < 10
     call WriteChar
 
 printCents:
-    mov eax, edx                     ; Ensure cents are in EAX
+    mov eax, edx               ; Ensure cents are in EAX
     call WriteDec
 
     call Crlf
@@ -960,20 +961,20 @@ NotConfirmDeposit:
 
 ValidateContinueInput:
     ; Handle 'Y' or 'y'
-    mov al, byte ptr [continueOption] 
+    mov al, byte ptr [continueOption] ; Load continueOption into AL
     or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
     cmp al, 'y'
     je depositLoop                     ; If 'y' (or 'Y'), go to depositLoop
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je PrintReceiptRequest             ; If 'n' (or 'N'), go to PrintReceiptRequest
+    je PrintReceiptRequest              ; If 'n' (or 'N'), go to PrintReceiptRequest
 
     ; Invalid input, prompt again
     mov eax, lightRed
     call SetTextColor
-    mov edx, OFFSET errorMessage     
-    call WriteString                    
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
     call Crlf
     jmp NotConfirmDeposit               ; Loop back and prompt again
 
@@ -997,14 +998,14 @@ ValidatePrintReceiptInput:
     ; Invalid input, prompt again
     mov eax, lightRed
     call SetTextColor
-    mov edx, OFFSET errorMessage     
-    call WriteString                    
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
     call Crlf
     call Crlf
     jmp PrintReceiptRequest               ; Loop back and prompt again
 
 PrintDepositReceipt:
-    call ClrScr              
+    call ClrScr              ; Clear the screen for a fresh receipt 
 
     call Crlf
     mov eax, white
@@ -1013,7 +1014,7 @@ PrintDepositReceipt:
     mov edx, OFFSET receiptHeader
     call WriteString
     call Crlf
-    call ReceiptDateTime                 ;display date and time
+    call ReceiptDateTime        ;display date and time
 
     call Crlf
     call Crlf
@@ -1030,11 +1031,11 @@ PrintDepositReceipt:
     ; Display deposit amount in RM
     mov eax, yellow
     call SetTextColor
-    mov eax, depositAmount          ; Get deposit amount in cents
+    mov eax, depositAmount   ; Get deposit amount in cents
     mov ebx, 100
     xor edx, edx
-    div ebx                         ; EAX = RM, EDX = cents
-    call WriteDec                   ; Display RM portion
+    div ebx                  ; EAX = RM, EDX = cents
+    call WriteDec            ; Display RM portion
 
     ; Display decimal point
     mov al, '.'
@@ -1065,15 +1066,15 @@ printDepositCentsPart:
     mov edx, OFFSET balanceUnit
     call WriteString
 
-    ; Display RM portion
-    mov eax, yellow
-    call SetTextColor
-
-     ; Display current balance (in RM.cents format)
+    ; Display current balance (in RM.cents format)
     mov eax, balance
     mov ebx, 100
     xor edx, edx
-    div ebx                         ; EAX = RM, EDX = cents
+    div ebx                  ; EAX = RM, EDX = cents
+
+    ; Display RM portion
+    mov eax, yellow
+    call SetTextColor
     call WriteDec
 
     ; Display decimal point
@@ -1094,30 +1095,30 @@ printDepositCents:
     call SetTextColor
     mov edx, OFFSET receiptFooter
     call WriteString
-    call Crlf                
+    call Crlf                ; New line after balance
     call Crlf
 
-    mov depositTotal, 0             ; Reset deposit total after printing receipt
+    mov depositTotal, 0      ; Reset deposit total after printing receipt
 
 ChooseAnotherFunction:
     call RePerformFunction
 
     ; Handle 'Y' or 'y' to go back to main menu
-    mov al, byte ptr [redoOption] 
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
     or al, 32
     cmp al, 'y'
     je DisplayMainMenu
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je QuitProgram                  ; If 'n' (or 'N'), exit program
+    je QuitProgram           ; If 'n' (or 'N'), exit program
 
 ValidateAnotherFuncInput:
    ; Invalid input, prompt again
    mov eax, lightRed
    call SetTextColor
-    mov edx, OFFSET errorMessage     
-    call WriteString                    
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
     call Crlf
     call Crlf
     jmp ChooseAnotherFunction               ; Loop back and prompt again
@@ -1125,9 +1126,7 @@ ValidateAnotherFuncInput:
     ret
 DepositMoney ENDP
 
-    ;+---------------------------+
-    ;|          Withdraw         |
-    ;----------------------------+
+;----------Withdraw----------
 WithdrawMoney PROC
     call Clrscr
 
@@ -1141,6 +1140,7 @@ WithdrawMoney PROC
     call SetTextColor
 
     call CheckBalance
+
 
 CheckAndWithdraw:
     call Crlf
@@ -1156,7 +1156,7 @@ CheckAndWithdraw:
     
     ; Try to read integer input
     call ReadInt
-    jno validIntegerInput                   ; Jump if no overflow (valid integer)
+    jno validIntegerInput           ; Jump if no overflow (valid integer)
     
     ; Handle invalid input
     mov eax, lightRed
@@ -1164,12 +1164,12 @@ CheckAndWithdraw:
     mov edx, OFFSET invalidIntegerMessage  ; ">>> Invalid input. Please enter a valid integer."
     call WriteString
     call Crlf
-    jmp CheckAndWithdraw                    ; Go back to prompt for withdrawal amount
+    jmp CheckAndWithdraw     ; Go back to prompt for withdrawal amount
     
 validIntegerInput:
     ; Check if the input is positive
     cmp eax, 0
-    jle invalidWithdrawal                   ; If <= 0, handle as invalid
+    jle invalidWithdrawal    ; If <= 0, handle as invalid
     
     ; Store valid withdrawal amount
     mov withdrawalAmount, eax
@@ -1184,23 +1184,23 @@ makeConfirmationWithdrawal:
     mov eax, lightGreen
     call SetTextColor
     call ReadChar
-    or al, 32                               ; Convert to lowercase (handles 'Y' and 'y')
-    call WriteChar                          ; Echo the character
+    or al, 32                 ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar            ; Echo the character
 
     cmp al, 'y'
-    je UpdateBalance                        ; If 'y', proceed to update balance
+    je UpdateBalance          ; If 'y', proceed to update balance
 
     call Crlf
 
     cmp al, 'n'
-    je NotConfirmWithdraw                   ; If 'n', go to not confirm section
+    je NotConfirmWithdraw     ; If 'n', go to not confirm section
 
     ; Invalid input, re-prompt
     mov eax, lightRed
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
-    call Crlf                 
+    call Crlf                 ; Add blank line after error message
     call Crlf
     jmp makeConfirmationWithdrawal
 
@@ -1214,25 +1214,23 @@ invalidWithdrawal:
 
 UpdateBalance:
     ; First track the RM amount for bill calculation
-    mov eax, withdrawalAmount               ; Load withdrawal amount (in RM)
+    mov eax, withdrawalAmount     ; Load withdrawal amount (in RM)
+    add withdrawTotal, eax        ; Add to total withdrawals (in RM)
 
     ; Convert withdrawal to cents (multiply by 100)
     mov eax, withdrawalAmount
     mov ecx, 100
-    mul ecx                                 ; EAX = withdrawal * 100 (in cents)
-    mov ebx, eax                            ; Save withdrawal in cents in EBX
+    mul ecx                       ; EAX = withdrawal * 100 (in cents)
+    mov ebx, eax                  ; Save withdrawal in cents in EBX
 
     ; Check if withdrawal exceeds balance
     cmp ebx, balance
-    jg InsufficientFunds                    ; If withdrawal > balance, jump to error message
-
-    mov eax, withdrawalAmount               ; Load withdrawal amount (in RM)
-    add withdrawTotal, eax                  ;  Add to total withdrawals (in RM)
+    jg InsufficientFunds          ; If withdrawal > balance, jump to error message
 
     ; Subtract withdrawal from balance
-    mov eax, balance                        ; Get current balance
-    sub eax, ebx                            ; Subtract withdrawal amount
-    mov balance, eax                        ; Store new balance
+    mov eax, balance              ; Get current balance
+    sub eax, ebx                  ; Subtract withdrawal amount
+    mov balance, eax              ; Store new balance
 
     call Crlf
     call Crlf
@@ -1249,10 +1247,10 @@ UpdateBalance:
     call WriteString
 
     ; Display current balance in RM.cents format
-    mov eax, balance                       ; Get balance in cents
+    mov eax, balance              ; Get balance in cents
     mov ecx, 100
     xor edx, edx
-    div ecx                                ; EAX = integer part (RM), EDX = cents
+    div ecx                       ; EAX = integer part (RM), EDX = cents
 
     ; Print integer part (RM)
     call WriteDec
@@ -1293,24 +1291,24 @@ ValidateContinueInput:
     ; Invalid input, prompt again
     mov eax, lightRed
     call SetTextColor
-    mov edx, OFFSET errorMessage       
-    call WriteString                   
+    mov edx, OFFSET errorMessage       ; Load invalid input message
+    call WriteString                   ; Display invalid input message
     call Crlf
     jmp NotConfirmWithdraw             ; Loop back and prompt again
 
 PrintReceiptRequest:
-    call SetTextColor                 
-    call PrintReceiptOption            
+    call SetTextColor                  ; Reset text color to white
+    call PrintReceiptOption            ; Display the receipt prompt
 
 ValidatePrintReceiptInput:
     ; Handle 'Y' or 'y' for receipt
-    mov al, byte ptr [PrintOption]     
+    mov al, byte ptr [PrintOption]     ; Load PrintReceiptOption into AL
     or al, 32
     cmp al, 'y'
     je PrintWithdrawalReceipt
     
     ; Handle 'N' or 'n' for skipping receipt
-    mov al, byte ptr [PrintOption]     
+    mov al, byte ptr [PrintOption]     ; Load PrintReceiptOption into AL
     or al, 32
     cmp al, 'n'
     je ChooseAnotherFunction
@@ -1318,14 +1316,14 @@ ValidatePrintReceiptInput:
     ; Invalid input, prompt again
     mov eax, lightRed
     call SetTextColor
-    mov edx, OFFSET errorMessage       
-    call WriteString                   
+    mov edx, OFFSET errorMessage       ; Load invalid input message
+    call WriteString                   ; Display invalid input message
     call Crlf
     call Crlf
-    jmp PrintReceiptRequest                     ; Loop back and prompt 
+    jmp PrintReceiptRequest            ; Loop back and prompt 
 
 PrintWithdrawalReceipt:
-    call ClrScr                        
+    call ClrScr                        ; Clear the screen for a fresh receipt view
 
     call Crlf
     mov eax, white
@@ -1373,7 +1371,7 @@ PrintWithdrawalReceipt:
     mov eax, balance
     mov ebx, 100
     xor edx, edx
-    div ebx                                  ; EAX = RM, EDX = cents
+    div ebx                           ; EAX = RM, EDX = cents
 
     ; Display RM portion
     call WriteDec
@@ -1480,7 +1478,7 @@ printWithdrawalCents:
 
     mov edx, OFFSET receiptFooter
     call WriteString
-    call Crlf                
+    call Crlf                ; New line after balance
 
     ; Reset withdrawal total after printing receipt
     mov withdrawTotal, 0
@@ -1489,40 +1487,38 @@ ChooseAnotherFunction:
     call RePerformFunction
 
     ; Handle 'Y' or 'y' to go back to main menu
-    mov al, byte ptr [redoOption]       ; Load redoOption into AL
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
     or al, 32
     cmp al, 'y'
     je DisplayMainMenu
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je QuitProgram                      ; If 'n' (or 'N'), go to QuitProgram
+    je QuitProgram              ; If 'n' (or 'N'), go to QuitProgram
 
 ValidateAnotherFuncInput:
     ; Invalid input, prompt again
     mov eax, lightRed
     call SetTextColor
-    mov edx, OFFSET errorMessage        
-    call WriteString                    
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                 ; Display invalid input message
     call Crlf
     call Crlf
-    jmp ChooseAnotherFunction           ; Loop back and prompt again
+    jmp ChooseAnotherFunction        ; Loop back and prompt again
 
 InsufficientFunds:
     mov eax, lightRed
     call SetTextColor
-    call Crlf
     mov edx, OFFSET notSufficientBalance
     call WriteString
+    call Crlf
     call Crlf
     jmp CheckAndWithdraw
 
     ret
 WithdrawMoney ENDP
 
-    ;+--------------------------------+
-    ;|          Check Balance         |
-    ;---------------------------------+
+;----------Check Balance----------
 CheckBalance PROC
     ; Set initial color
     mov eax, white
@@ -1531,7 +1527,7 @@ CheckBalance PROC
     ; Check if we're coming from the main menu option 3
     mov eax, mainMenuChoice
     cmp eax, 3
-    jne SkipCheckBalanceHeader              ; Skip header if not from main menu
+    jne SkipCheckBalanceHeader   ; Skip header if not from main menu
     
     ; Display header for check balance screen
     call ClrScr
@@ -1552,15 +1548,15 @@ SkipCheckBalanceHeader:
     ; Display the balance with currency symbol
     mov eax, yellow    
     call SetTextColor
-    mov edx, OFFSET balanceUnit             ; RM Unit
+    mov edx, OFFSET balanceUnit     ; RM Unit
     call WriteString
     
     ; Calculate and display the balance in RM.xx format
     mov eax, balance
     mov ebx, 100
-    xor edx, edx                            ; Clear edx for division
-    div ebx                                 ; EAX = balance / 100, EDX = balance % 100
-    call WriteDec                           ; Print whole number (RM part)
+    xor edx, edx       ; Clear edx for division
+    div ebx            ; EAX = balance / 100, EDX = balance % 100
+    call WriteDec      ; Print whole number (RM part)
     
     ; Print decimal point
     mov al, '.'
@@ -1568,28 +1564,28 @@ SkipCheckBalanceHeader:
     
     ; Print the decimal part (EDX contains cents)
     mov eax, edx
-    cmp eax, 10                             ; Ensure two-digit display (e.g., 05 instead of 5)
-    jae printCents                          ; Changed from jg to jae for proper comparison
-    mov al, '0'                             ; Print leading zero for values < 10
+    cmp eax, 10        ; Ensure two-digit display (e.g., 05 instead of 5)
+    jae printCents     ; Changed from jg to jae for proper comparison
+    mov al, '0'        ; Print leading zero for values < 10
     call WriteChar
     
 printCents:
     mov eax, edx
-    call WriteDec                           ; Print cents
+    call WriteDec      ; Print cents
     call Crlf
     
     ; Determine if we need to request reperform
     cmp mainMenuChoice, 3
     je RequestReperform
-    jmp ExitCheckBalance                    ; Added direct jump to exit to simplify flow
+    jmp ExitCheckBalance    ; Added direct jump to exit to simplify flow
     
 RequestReperform:
     call Crlf
     call RePerformFunction
     
     ; Handle user response
-    mov al, byte ptr [redoOption] 
-    or al, 32                               ; Convert to lowercase
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
+    or al, 32                    ; Convert to lowercase
     
     cmp al, 'y'
     je DisplayMainMenu
@@ -1600,20 +1596,17 @@ RequestReperform:
     ; If invalid input (neither 'y' nor 'n'), handle it
     mov eax, lightRed
     call SetTextColor
-    mov edx, OFFSET errorInvalidOption    
+    mov edx, OFFSET errorInvalidOption    ; You need to define this string
     call WriteString
     call Crlf
     mov eax, white
     call SetTextColor
-    jmp RequestReperform    
+    jmp RequestReperform    ; Ask again
     
 ExitCheckBalance:
     ret
 CheckBalance ENDP
-
-    ;+--------------------------------------+
-    ;|           Currency Conversion        |
-    ;---------------------------------------+
+;----------Currency Conversion----------
 CurrencyConversion PROC
 CurrencyConversionLoop:
     call Clrscr
@@ -1622,70 +1615,70 @@ CurrencyConversionLoop:
     call Crlf
 
 NotConfirmWithdraw:
-    mov eax, white           
+    mov eax, white           ; Set prompt text to white
     call SetTextColor
     call ContinueRequest
 
 ValidateContinueInput:
     ; Handle 'Y' or 'y'
-    mov al, byte ptr [continueOption] 
-    or al, 32                               ; Convert 'Y' to 'y' (if uppercase)
+    mov al, byte ptr [continueOption] ; Load continueOption into AL
+    or al, 32                          ; Convert 'Y' to 'y' (if uppercase)
     cmp al, 'y'
-    je CurrencyConversionLoop               ; If 'y' (or 'Y'), go to CheckAndWithdraw
+    je CurrencyConversionLoop          ; If 'y' (or 'Y'), go to CheckAndWithdraw
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je PrintReceiptRequest                  ; If 'n' (or 'N'), go to PrintReceiptRequest
+    je PrintReceiptRequest              ; If 'n' (or 'N'), go to PrintReceiptRequest
 
     ; Invalid input, prompt again
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
-    mov edx, OFFSET errorMessage     
-    call WriteString                  
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                  ; Display invalid input message
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
-    jmp NotConfirmWithdraw                  ; Loop back and prompt again
+    jmp NotConfirmWithdraw               ; Loop back and prompt again
 
 PrintReceiptRequest:
-    mov eax, white           
+    mov eax, white           ; Set prompt text to white
     call SetTextColor
-    call PrintReceiptOption                 ; Display the receipt prompt
+    call PrintReceiptOption    ; Display the receipt prompt
 
     ; Handle 'Y' or 'y' for receipt
-    mov al, byte ptr [PrintOption] 
+    mov al, byte ptr [PrintOption] ; Load PrintReceiptOption into AL
     or al, 32
     cmp al, 'y'
     je PrintWithdrawalReceipt
     
     ; Handle 'N' or 'n' for skipping receipt
-    mov al, byte ptr [PrintOption] 
+    mov al, byte ptr [PrintOption] ; Load PrintReceiptOption into AL
     or al, 32
     cmp al, 'n'
     je ChooseAnotherFunction
 
     ; Invalid input, prompt again
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
-    mov edx, OFFSET errorMessage     
-    call WriteString                    
+    mov edx, OFFSET errorMessage     ; Load invalid input message
+    call WriteString                    ; Display invalid input message
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp PrintReceiptRequest               ; Loop back and prompt 
 
 PrintWithdrawalReceipt:
-    call ClrScr              
+    call ClrScr              ; Clear the screen for a fresh receipt view
 
     ; Print receipt header - WHITE
-    mov eax, white                        ; Set receipt headers to white
+    mov eax, white           ; Set receipt headers to white
     call SetTextColor
     mov edx, OFFSET receiptHeader
     call WriteString
     call Crlf
     
-    call ReceiptDateTime                  ; Display date and time
+    call ReceiptDateTime        ; Display date and time
     call Crlf
     call Crlf
 
@@ -1694,7 +1687,7 @@ PrintWithdrawalReceipt:
     call WriteString
 
     ; Display withdrawal amount - YELLOW
-    mov eax, yellow                       ; Set result to yellow
+    mov eax, yellow          ; Set result to yellow
     call SetTextColor
     mov edx, OFFSET balanceUnit
     call WriteString
@@ -1703,13 +1696,13 @@ PrintWithdrawalReceipt:
     call Crlf
 
     ; Print current balance label - WHITE
-    mov eax, white                      ; Reset to white for labels
+    mov eax, white           ; Reset to white for labels
     call SetTextColor
     mov edx, OFFSET receiptBalance
     call WriteString
 
     ; Display current balance in yellow (in RM.cents format) - YELLOW
-    mov eax, yellow                     ; Set result to yellow
+    mov eax, yellow          ; Set result to yellow
     call SetTextColor
     mov edx, OFFSET balanceUnit
     call WriteString
@@ -1718,8 +1711,8 @@ PrintWithdrawalReceipt:
     mov eax, balance
     mov ebx, 100
     xor edx, edx
-    div ebx                             ; EAX = RM, EDX = cents
-    call WriteDec                       ; Display RM portion
+    div ebx                  ; EAX = RM, EDX = cents
+    call WriteDec            ; Display RM portion
     
     ; Display decimal point
     mov al, '.'
@@ -1827,7 +1820,7 @@ AUDTotal:
     call Crlf
 
 ChooseAnotherFunction:
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white           ; Set prompt text to white
     call SetTextColor
     call RePerformFunction
 
@@ -1839,7 +1832,7 @@ ChooseAnotherFunction:
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je QuitProgram                      ; If 'n' (or 'N'), go to PrintReceiptRequest
+    je QuitProgram              ; If 'n' (or 'N'), go to PrintReceiptRequest
 
     ret
 CurrencyConversion ENDP
@@ -1863,7 +1856,7 @@ CurrencyMenu PROC
     call WriteString
 
     ; Read user input
-    mov eax, lightGreen                 ; Set input color to light green
+    mov eax, lightGreen     ; Set input color to light green
     call SetTextColor
     call ReadInt
     mov chosenCurrency, eax
@@ -1871,9 +1864,7 @@ CurrencyMenu PROC
     ret
 CurrencyMenu ENDP
 
-    ;+------------------------+
-    ;| Handle Chosen Currency |
-    ;+------------------------+
+;---------- Handle Chosen Currency ----------
 HandleChosenCurrency PROC
     ; Read chosen currency again from stored variable
     mov eax, chosenCurrency
@@ -1902,54 +1893,51 @@ HandleChosenCurrency PROC
     cmp eax, 6
     je DisplayMainMenu 
 
-    jmp Done  
+    jmp Done  ; Add this to handle fall-through case (although it shouldn't happen)
 
+; Invalid input - display error and return to menu
 InvalidInput:
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     
+    ; Instead of jumping to CurrencyMenu, we'll call it and then
+    ; recursively call HandleChosenCurrency to re-validate the new input
     call WaitMsg
     call ClrScr
     call CurrencyMenu
-    call HandleChosenCurrency 
+    call HandleChosenCurrency  ; Recursive call to validate new input
     
 Done:
     ret
 HandleChosenCurrency ENDP
 
-    ;+--------------------+
-    ;| Currency Conventor |
-    ;+--------------------+
-
-    ;+-------------+
-    ;|USD Conventor|
-    ;+-------------+
+;---------- Currency Conventor ----------
 USDConventor PROC
 getConversionAmount:
-    mov eax, white          
+    mov eax, white          ; Set prompt text to white
     call SetTextColor
     MOV EDX, OFFSET Message1
     Call WriteString
     
-    mov eax, lightGreen     
+    mov eax, lightGreen     ; Set input color to light green
     call SetTextColor
     Call ReadDec
     MOV withdrawalamount, eax
 
     ; Input validation - must be positive
     cmp eax, 0
-    jle invalidWithdrawal               ; Changed from jl to jle to also catch zero
+    jle invalidWithdrawal    ; Changed from jl to jle to also catch zero
 
     ; Validate if there's enough balance
     mov eax, withdrawalamount
     mov ebx, rateUSD
-    mul ebx                             ; Calculate amount needed in local currency
+    mul ebx                  ; Calculate amount needed in local currency
     
     ; Check if we have enough balance
     cmp eax, balance
@@ -1957,56 +1945,56 @@ getConversionAmount:
 
 makeConfirmationWithdrawal:
 
-    mov eax, white          
+    mov eax, white          ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET confirmWithdraw
     call WriteString
 
     ; Read user input (confirmation)
-    mov eax, lightGreen    
+    mov eax, lightGreen     ; Set input color to light green
     call SetTextColor
     call ReadChar
-    or al, 32                           ; Convert to lowercase (handles 'Y' and 'y')
-    call WriteChar            
+    or al, 32                 ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar            ; Echo the character
 
     cmp al, 'y'
-    je convertUSD                       ; If 'y', proceed to update balance
+    je convertUSD          ; If 'y', proceed to update balance
 
     call Crlf
 
     cmp al, 'n'
-    je getConversionAmount              ; If 'n', return to deposit loop
+    je getConversionAmount            ; If 'n', return to deposit loop
 
     ; Invalid input, re-prompt
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp makeConfirmationWithdrawal
 
 invalidWithdrawal:
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET invalidWithdrawMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp getConversionAmount
 
 insufficientFunds:
-    mov eax, lightRed           
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
-    mov edx, OFFSET insufficientFundsMessage    
+    mov edx, OFFSET insufficientFundsMessage    ; Need to define this message in data section
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp getConversionAmount
 
@@ -2017,7 +2005,7 @@ convertUSD:
     MOV Amount, EAX
     MOV EAX, amount
     mov ebx, 100
-    xor edx, edx                        ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     mul ebx
 
     mov amount, eax
@@ -2028,7 +2016,7 @@ convertUSD:
 
     mov eax, amount
     mov ebx, 100
-    xor edx, edx                        ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     div ebx
     mov amount, eax
 
@@ -2037,7 +2025,7 @@ convertUSD:
     mov withdrawTotal, eax
 
     mov eax, totalAmountUSD
-    add eax, withdrawalamount            ; FIXED: changed from withdrawalAmount
+    add eax, withdrawalamount    ; FIXED: changed from withdrawalAmount
     mov totalAmountUSD, eax
 
 Print:
@@ -2087,7 +2075,7 @@ Print:
     call WriteString
     MOV EAX, balance
     mov ebx, 100
-    xor edx, edx                        ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     div ebx
     Call WriteDec
 
@@ -2097,29 +2085,26 @@ Print:
 
     ; Print the decimal part in YELLOW
     mov eax, edx
-    cmp eax, 10                         ; Ensure two-digit display (e.g., 05 instead of 5)
+    cmp eax, 10         ; Ensure two-digit display (e.g., 05 instead of 5)
     jge printCents
-    mov al, '0'                         ; Print leading zero for values < 10
+    mov al, '0'        ; Print leading zero for values < 10
     call WriteChar
 
 printCents:
     mov eax, edx
-    call WriteDec                       ; Print cents
+    call WriteDec      ; Print cents
 
     ret
 USDConventor ENDP
 
-    ;+-------------+
-    ;|EUR Conventor|
-    ;+-------------+
 EURConventor PROC
 getEURConversionAmount:
-    mov eax, white          
+    mov eax, white          ; Set prompt text to white
     call SetTextColor
     MOV EDX, OFFSET Message2
     Call WriteString
     
-    mov eax, lightGreen    
+    mov eax, lightGreen     ; Set input color to light green
     call SetTextColor
     Call ReadDec
     MOV withdrawalamount, eax
@@ -2131,7 +2116,7 @@ getEURConversionAmount:
     ; Validate if there's enough balance
     mov eax, withdrawalamount
     mov ebx, rateEUR
-    mul ebx                              ; Calculate amount needed in local currency
+    mul ebx                  ; Calculate amount needed in local currency
     
     ; Check if we have enough balance
     cmp eax, balance
@@ -2139,56 +2124,56 @@ getEURConversionAmount:
 
 makeEURConfirmation:
 
-    mov eax, white          
+    mov eax, white          ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET confirmWithdraw
     call WriteString
 
     ; Read user input (confirmation)
-    mov eax, lightGreen     
+    mov eax, lightGreen     ; Set input color to light green
     call SetTextColor
     call ReadChar
-    or al, 32                           ; Convert to lowercase (handles 'Y' and 'y')
-    call WriteChar          
+    or al, 32               ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar          ; Echo the character
 
     cmp al, 'y'
-    je convertEUR                       ; If 'y', proceed to update balance
+    je convertEUR           ; If 'y', proceed to update balance
 
     call Crlf
 
     cmp al, 'n'
-    je getEURConversionAmount           ; If 'n', return to deposit loop
+    je getEURConversionAmount  ; If 'n', return to deposit loop
 
     ; Invalid input, re-prompt
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp makeEURConfirmation
 
 invalidEURWithdrawal:
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET invalidWithdrawMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp getEURConversionAmount
 
 insufficientEURFunds:
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET insufficientFundsMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp getEURConversionAmount
 
@@ -2199,7 +2184,7 @@ convertEUR:
     mov Amount, EAX
     MOV EAX, amount
     mov ebx, 100
-    xor edx, edx                        ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     mul ebx
 
     mov amount, eax
@@ -2210,7 +2195,7 @@ convertEUR:
 
     mov eax, amount
     mov ebx, 100
-    xor edx, edx                        ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     div ebx
     mov amount, eax
 
@@ -2219,7 +2204,7 @@ convertEUR:
     mov withdrawTotal, eax
 
     mov eax, totalAmountEUR
-    add eax, withdrawalamount          ; FIXED: changed from withdrawalAmount
+    add eax, withdrawalamount    ; FIXED: changed from withdrawalAmount
     mov totalAmountEUR, eax
 
 PrintEUR:
@@ -2269,7 +2254,7 @@ PrintEUR:
     call WriteString
     MOV EAX, balance
     mov ebx, 100
-    xor edx, edx                    ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     div ebx
     Call WriteDec
 
@@ -2279,29 +2264,26 @@ PrintEUR:
 
     ; Print the decimal part in YELLOW
     mov eax, edx
-    cmp eax, 10                     ; Ensure two-digit display (e.g., 05 instead of 5)
+    cmp eax, 10         ; Ensure two-digit display (e.g., 05 instead of 5)
     jge printEURCents
-    mov al, '0'                     ; Print leading zero for values < 10
+    mov al, '0'        ; Print leading zero for values < 10
     call WriteChar
 
 printEURCents:
     mov eax, edx
-    call WriteDec                   ; Print cents
+    call WriteDec      ; Print cents
 
     ret
 EURConventor ENDP
 
-    ;+-------------+
-    ;|GBP Conventor|
-    ;+-------------+
 GBPConventor PROC
 getGBPConversionAmount:
-    mov eax, white          
+    mov eax, white          ; Set prompt text to white
     call SetTextColor
     MOV EDX, OFFSET Message3
     Call WriteString
     
-    mov eax, lightGreen     
+    mov eax, lightGreen     ; Set input color to light green
     call SetTextColor
     Call ReadDec
     MOV withdrawalamount, eax
@@ -2313,7 +2295,7 @@ getGBPConversionAmount:
     ; Validate if there's enough balance
     mov eax, withdrawalamount
     mov ebx, rateGBP
-    mul ebx                         ; Calculate amount needed in local currency
+    mul ebx                  ; Calculate amount needed in local currency
     
     ; Check if we have enough balance
     cmp eax, balance
@@ -2321,56 +2303,56 @@ getGBPConversionAmount:
 
 makeGBPConfirmation:
 
-    mov eax, white          
+    mov eax, white          ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET confirmWithdraw
     call WriteString
 
     ; Read user input (confirmation)
-    mov eax, lightGreen     
+    mov eax, lightGreen     ; Set input color to light green
     call SetTextColor
     call ReadChar
-    or al, 32                       ; Convert to lowercase (handles 'Y' and 'y')
-    call WriteChar          
+    or al, 32               ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar          ; Echo the character
 
     cmp al, 'y'
-    je convertGBP                   ; If 'y', proceed to update balance
+    je convertGBP           ; If 'y', proceed to update balance
 
     call Crlf
 
     cmp al, 'n'
-    je getGBPConversionAmount       ; If 'n', return to deposit loop
+    je getGBPConversionAmount  ; If 'n', return to deposit loop
 
     ; Invalid input, re-prompt
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp makeGBPConfirmation
 
 invalidGBPWithdrawal:
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET invalidWithdrawMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp getGBPConversionAmount
 
 insufficientGBPFunds:
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET insufficientFundsMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp getGBPConversionAmount
 
@@ -2381,7 +2363,7 @@ convertGBP:
     mov Amount, EAX
     MOV EAX, amount
     mov ebx, 100
-    xor edx, edx                     ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     mul ebx
 
     mov amount, eax
@@ -2392,7 +2374,7 @@ convertGBP:
 
     mov eax, amount
     mov ebx, 100
-    xor edx, edx                     ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     div ebx
     mov amount, eax
 
@@ -2400,8 +2382,8 @@ convertGBP:
     add eax, amount
     mov withdrawTotal, eax
 
-    mov eax, totalAmountGBP 
-    add eax, withdrawalamount       ; FIXED: changed from withdrawalAmount
+    mov eax, totalAmountGBP
+    add eax, withdrawalamount    ; FIXED: changed from withdrawalAmount
     mov totalAmountGBP, eax
 
 PrintGBP:
@@ -2451,7 +2433,7 @@ PrintGBP:
     call WriteString
     MOV EAX, balance
     mov ebx, 100
-    xor edx, edx                    ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     div ebx
     Call WriteDec
 
@@ -2461,29 +2443,26 @@ PrintGBP:
 
     ; Print the decimal part in YELLOW
     mov eax, edx
-    cmp eax, 10                    ; Ensure two-digit display (e.g., 05 instead of 5)
+    cmp eax, 10         ; Ensure two-digit display (e.g., 05 instead of 5)
     jge printGBPCents
-    mov al, '0'                    ; Print leading zero for values < 10
+    mov al, '0'        ; Print leading zero for values < 10
     call WriteChar
 
 printGBPCents:
     mov eax, edx
-    call WriteDec                  ; Print cents
+    call WriteDec      ; Print cents
 
     ret
 GBPConventor ENDP
 
-    ;+-------------+
-    ;|JPY Conventor|
-    ;+-------------+
 JPYConventor PROC
 getJPYConversionAmount:
-    mov eax, white          
+    mov eax, white          ; Set prompt text to white
     call SetTextColor
     MOV EDX, OFFSET Message4
     Call WriteString
     
-    mov eax, lightGreen     
+    mov eax, lightGreen     ; Set input color to light green
     call SetTextColor
     Call ReadDec
     MOV withdrawalamount, eax
@@ -2495,7 +2474,7 @@ getJPYConversionAmount:
     ; Validate if there's enough balance
     mov eax, withdrawalamount
     mov ebx, rateJPY
-    mul ebx                        ; Calculate amount needed in local currency
+    mul ebx                  ; Calculate amount needed in local currency
     
     ; Check if we have enough balance
     cmp eax, balance
@@ -2503,56 +2482,56 @@ getJPYConversionAmount:
 
 makeJPYConfirmation:
 
-    mov eax, white         
+    mov eax, white          ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET confirmWithdraw
     call WriteString
 
     ; Read user input (confirmation)
-    mov eax, lightGreen     
+    mov eax, lightGreen     ; Set input color to light green
     call SetTextColor
     call ReadChar
-    or al, 32                       ; Convert to lowercase (handles 'Y' and 'y')
-    call WriteChar          
+    or al, 32               ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar          ; Echo the character
 
     cmp al, 'y'
-    je convertJPY                   ; If 'y', proceed to update balance
+    je convertJPY           ; If 'y', proceed to update balance
 
     call Crlf
 
     cmp al, 'n'
-    je getJPYConversionAmount       ; If 'n', return to deposit loop
+    je getJPYConversionAmount  ; If 'n', return to deposit loop
 
     ; Invalid input, re-prompt
-    mov eax, lightRed           
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp makeJPYConfirmation
 
 invalidJPYWithdrawal:
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET invalidWithdrawMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp getJPYConversionAmount
 
 insufficientJPYFunds:
-    mov eax, lightRed            
+    mov eax, lightRed            ; Set error message to red
     call SetTextColor
     mov edx, OFFSET insufficientFundsMessage
     call WriteString
     call Crlf
     call Crlf
-    mov eax, white          
+    mov eax, white          ; Reset to white
     call SetTextColor
     jmp getJPYConversionAmount
 
@@ -2563,7 +2542,7 @@ convertJPY:
     mov Amount, EAX
     MOV EAX, amount
     mov ebx, 100
-    xor edx, edx                    ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     mul ebx
 
     mov amount, eax
@@ -2574,7 +2553,7 @@ convertJPY:
 
     mov eax, amount
     mov ebx, 100
-    xor edx, edx                    ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     div ebx
     mov amount, eax
 
@@ -2583,7 +2562,7 @@ convertJPY:
     mov withdrawTotal, eax
 
     mov eax, totalAmountJPY
-    add eax, withdrawalamount       ; FIXED: changed from withdrawalAmount
+    add eax, withdrawalamount    ; FIXED: changed from withdrawalAmount
     mov totalAmountJPY, eax
 
 PrintJPY:
@@ -2633,7 +2612,7 @@ PrintJPY:
     call WriteString
     MOV EAX, balance
     mov ebx, 100
-    xor edx, edx                ; Clear edx for division
+    xor edx, edx       ; Clear edx for division
     div ebx
     Call WriteDec
 
@@ -2643,21 +2622,18 @@ PrintJPY:
 
     ; Print the decimal part in YELLOW
     mov eax, edx
-    cmp eax, 10                 ; Ensure two-digit display (e.g., 05 instead of 5)
+    cmp eax, 10         ; Ensure two-digit display (e.g., 05 instead of 5)
     jge printJPYCents
-    mov al, '0'                 ; Print leading zero for values < 10
+    mov al, '0'        ; Print leading zero for values < 10
     call WriteChar
 
 printJPYCents:
     mov eax, edx
-    call WriteDec               ; Print cents
+    call WriteDec      ; Print cents
 
     ret 
 JPYConventor ENDP
 
-    ;+-------------+
-    ;|AUD Conventor|
-    ;+-------------+
 AUDConventor PROC
 getAUDConversionAmount:
     mov eax, white
@@ -2822,13 +2798,12 @@ printAUDCents:
     ret
 AUDConventor ENDP
 
-    ;+-------------------------------------------+
-    ;|           Future Value Calculation        |
-    ;--------------------------------------------+
+;----------Future Value Calculation----------
 FutureValueCalculator PROC
     call ClrScr
 
-; === Get Deposit Amount (in RM) with validation ===
+    ; === Get Deposit Amount (in RM) with validation ===
+
 get_deposit:
 
     mov edx, OFFSET futureValueCalTitle
@@ -2845,7 +2820,7 @@ get_deposit:
     
     mov eax, lightGreen  
     call SetTextColor
-    call ReadInt                        ; Integer because deposit money is only
+    call ReadInt      ; Integer because deposit money is only
     
     ; Validate deposit (must be > 0)
     cmp eax, 0
@@ -2862,12 +2837,12 @@ get_deposit:
     call SetTextColor
     call WaitMsg
     call ClrScr
-    jmp get_deposit                     ; Reprompt for deposit
+    jmp get_deposit   ; Reprompt for deposit
     
 valid_deposit:
     mov deposit, eax  ; Store valid deposit (in RM)
     
-; === Get Interest Rate (as a whole number percentage) with validation ===
+    ; === Get Interest Rate (as a whole number percentage) with validation ===
 get_rate:
     mov eax, white    
     call SetTextColor
@@ -2891,12 +2866,12 @@ get_rate:
     call Crlf
     mov eax, white
     call SetTextColor
-    jmp get_rate                        ; Reprompt for interest rate
-            
-valid_rate:
-    mov interestRate, eax               ; Store valid interest rate
+    jmp get_rate      ; Reprompt for interest rate
     
-; === Get Number of Years with validation ===
+valid_rate:
+    mov interestRate, eax  ; Store valid interest rate
+    
+    ; === Get Number of Years with validation ===
 get_years:
     mov eax, white    
     call SetTextColor
@@ -2920,10 +2895,10 @@ get_years:
     call Crlf
     mov eax, white
     call SetTextColor
-    jmp get_years                       ; Reprompt for years
+    jmp get_years     ; Reprompt for years
     
 valid_years:
-    mov years, eax                      ; Store valid number of years
+    mov years, eax    ; Store valid number of years
     
     ; Reset text color for calculations
     mov eax, white
@@ -2931,33 +2906,32 @@ valid_years:
 
     ; Convert deposit to sen (1 RM = 100 sen)
     mov eax, deposit
-    imul eax, oneHundred                ; Convert deposit to sen --> Signed Multiplication (Avoid Overflow)
-    mov deposit, eax                    ; Store the deposit in sen
+    imul eax, oneHundred    ; Convert deposit to sen --> Signed Multiplication (Avoid Overflow)
+    mov deposit, eax        ; Store the deposit in sen
     
     ; Initialize Future Value in sen (starting with 0)
     mov futureValue, 0
     
     ; Loop to compute FV using corrected compound interest formula
-    mov ecx, years                      ; Set the loop counter to the number of years
+    mov ecx, years    ; Set the loop counter to the number of years
 
 first_year:
     ; First Year - Only add deposit (No Interest Applied)
     mov eax, deposit
     add futureValue, eax
-    loop after_first_year               ; Skip interest calculation for the first year --> The loop instruction decrements ecx by 1.
+    loop after_first_year  ; Skip interest calculation for the first year --> The loop instruction decrements ecx by 1.
 
 after_first_year: ; No interest calculation at here
 
 calc_loop:
     cmp ecx, 0
-    je display_result                   ; Exit loop if years == 0
-
+    je display_result           ; Exit loop if years == 0
     ; Step 1: Apply interest BEFORE adding deposit
     mov eax, futureValue
     mov edx, 0            
-    imul eax, interestRate              ; Multiply FV by interestRate
+    imul eax, interestRate      ; Multiply FV by interestRate
     mov edx, 0               
-    idiv oneHundred                     ; Divide by 100 for proper scaling --> Signed Division (Avoid Overflow)
+    idiv oneHundred             ; Divide by 100 for proper scaling --> Signed Division (Avoid Overflow)
 
     ; Step 2: Add computed interest to FV
     add futureValue, eax
@@ -2966,7 +2940,7 @@ calc_loop:
     mov eax, deposit
     add futureValue, eax
     ; Check for overflow before continuing
-    jnc continueLoop                    ;jump if no carry
+    jnc continueLoop    ;jump if no carry
     
     mov eax, lightRed       
     call SetTextColor
@@ -2977,7 +2951,7 @@ calc_loop:
     jmp QuitProgram
     
 continueLoop:
-    loop calc_loop                      ; Decrement the year counter and repeat the loop
+    loop calc_loop    ; Decrement the year counter and repeat the loop
     
 display_result:
     ; --- Display Future Value in RM and Sen ---
@@ -2993,24 +2967,24 @@ display_result:
     ; Convert future value from sen to RM and sen
     mov eax, futureValue
     mov edx, 0
-    div oneHundred                      ; EAX = RM, EDX = sen
+    div oneHundred    ; EAX = RM, EDX = sen
 
     ; Display RM part
-    call WriteDec       
-    mov al, '.'                         ; Print decimal point
+    call WriteDec
+    mov al, '.'    ; Print decimal point
     call WriteChar
 
     ; Display Sen part (ensure two digits)
-    mov eax, edx                        ; Move sen to EAX (remainder store in edx)
-    cmp eax, 10                         ; If less than 10, add leading zero) (5sen become .05)
-    jae print_sen                       ;(>= 10, proceed to print_sen)
-    mov al, '0'                         ; add trailing zero
+    mov eax, edx            ; Move sen to EAX (remainder store in edx)
+    cmp eax, 10             ; If less than 10, add leading zero) (5sen become .05)
+    jae print_sen           ;(>= 10, proceed to print_sen)
+    mov al, '0'             ; add trailing zero
     call WriteChar
 
 print_sen:
     call WriteDec
     
-    mov eax, white                      ; Reset to white for continue prompts
+    mov eax, white    ; Reset to white for continue prompts
     call SetTextColor
     call Crlf
     jmp ValidateContinueOption
@@ -3049,7 +3023,7 @@ ChooseAnotherFunction:
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je QuitProgram                          ; If 'n' (or 'N'), exit program
+    je QuitProgram                         ; If 'n' (or 'N'), exit program
 
     ; Invalid input, prompt again
     mov eax, lightRed
@@ -3063,15 +3037,13 @@ ChooseAnotherFunction:
     jmp ChooseAnotherFunction               ; Loop back and prompt again
 
 ReturnMainMenu:
-    mov eax, white        
+    mov eax, white        ; Reset text color
     call SetTextColor
-    ret                                     ; Return to main menu
+    ret                   ; Return to main menu
 
 FutureValueCalculator ENDP
 
-    ;+--------------------------------+
-    ;|         Reward Points          |
-    ;---------------------------------+
+;----------Reward Points----------
 Reward PROC
     call ClrScr
 
@@ -3129,20 +3101,20 @@ RewardMenuLoop:
     cmp rewardMenuChoice, 4
     je QuitProgram
 
-    jmp RequestReperform            ; Add fallthrough protection
+    jmp RequestReperform  ; Add fallthrough protection
 
 InvalidInput:
-    mov eax, lightRed               ; Set error message to red (changed from lightRed)
+    mov eax, lightRed            ; Set error message to red (changed from lightRed)
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
-    call Crlf                       ; Add extra blank line after error message
+    call Crlf               ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     call WaitMsg
     call ClrScr
-    jmp RewardMenuLoop              ; Loop back to re-display the menu
+    jmp RewardMenuLoop      ; Loop back to re-display the menu
 
 RequestReperform:
     call RePerformFunction
@@ -3166,14 +3138,11 @@ RequestReperform:
     call Crlf                  
     mov eax, white
     call SetTextColor
-    jmp RequestReperform            ; Loop back for valid input
+    jmp RequestReperform       ; Loop back for valid input
 
     ret
 Reward ENDP
 
-    ;+-------------+
-    ;|Redeem Points|
-    ;+-------------+
 RedeemPoints PROC
     call ClrScr
 RedeemMenuLoop:
@@ -3209,23 +3178,23 @@ RedeemMenuLoop:
     je QuitProgram
 
 InvalidRedeemPointChoice:
-    mov eax, lightRed               
+    mov eax, lightRed                ; Set error message to red (changed from lightRed)
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
-    call Crlf                        
+    call Crlf                   ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     call WaitMsg
     call ClrScr
-    jmp RedeemMenuLoop                  ; Loop back to re-display the menu
+    jmp RedeemMenuLoop          ; Loop back to re-display the menu
 
 pointToMoney:
     call Crlf
 
 getRedeemPointsLoop:
-    mov eax, white              
+    mov eax, white              ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET pointToMoneyMsg
     call writeString
@@ -3243,23 +3212,23 @@ getRedeemPointsLoop:
     cmp pointToMoneyAmount, eax
     jbe makeConfirmationRedeemMoney
 
-    mov eax, lightRed               
+    mov eax, lightRed                ; Set error message to red (changed from lightRed)
     call SetTextColor
     mov edx, OFFSET insufficientRewardPoint
     call writeString
     call Crlf
-    call Crlf                   
+    call Crlf                   ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     jmp getRedeemPointsLoop
 
 invalidPointAmountInput:
-    mov eax, lightRed                
+    mov eax, lightRed                ; Set error message to red
     call SetTextColor
-    mov edx, OFFSET invalidWithdrawMessage  
+    mov edx, OFFSET invalidWithdrawMessage  ; Reuse this error message
     call writeString
     call Crlf
-    call Crlf                   
+    call Crlf                   ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     call WaitMsg
@@ -3267,7 +3236,7 @@ invalidPointAmountInput:
     jmp RedeemMenuLoop
 
 makeConfirmationRedeemMoney:
-    mov eax, white              
+    mov eax, white              ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET confirmRedeemMoney
     call WriteString
@@ -3276,24 +3245,24 @@ makeConfirmationRedeemMoney:
     mov eax, lightGreen
     call SetTextColor
     call ReadChar
-    or al, 32                           ; Convert to lowercase (handles 'Y' and 'y')
-    call WriteChar                      
+    or al, 32                   ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar              ; Echo the character
 
     cmp al, 'y'
-    je DeductRewardPoints                ; If 'y', proceed to update balance
+    je DeductRewardPoints       ; If 'y', proceed to update balance
 
     call Crlf
 
     cmp al, 'n'
-    je NotConfirmRedeemMoney            ; If 'n', return to deposit loop
+    je NotConfirmRedeemMoney    ; If 'n', return to deposit loop
 
     ; Invalid input, re-prompt
-    mov eax, lightRed                   ; Set error message to red
+    mov eax, lightRed                ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
-    call Crlf                   
+    call Crlf                   ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     jmp makeConfirmationRedeemMoney
@@ -3302,7 +3271,7 @@ DeductRewardPoints:
     mov eax, pointToMoneyAmount
     mov ecx, 10
     xor edx, edx
-    div ecx                             ; EAX = pointToCash / 10, EDX = pointToCash % 10
+    div ecx                ; EAX = pointToCash / 10, EDX = pointToCash % 10
     mov moneyRedeemAmount, eax
     mov leftoverPoints, edx 
     mov ecx, 100
@@ -3330,12 +3299,12 @@ DeductRewardPoints:
 
     call Crlf
 
-    mov eax, white                      ; Set label text to white
+    mov eax, white               ; Set label text to white
     call SetTextColor
     mov edx, OFFSET moneyRedeemMsg
     call writeString
 
-    mov eax, yellow                     ; Set values to yellow
+    mov eax, yellow              ; Set values to yellow
     call SetTextColor
     mov edx, OFFSET balanceUnit
     call writeString
@@ -3343,12 +3312,12 @@ DeductRewardPoints:
     call writeDec
     call Crlf
 
-    mov eax, white                      ; Set label text to white
+    mov eax, white               ; Set label text to white
     call SetTextColor
     mov edx, OFFSET rewardPointsDeducted
     call writeString
 
-    mov eax, yellow                     ; Set values to yellow
+    mov eax, yellow              ; Set values to yellow
     call SetTextColor
     mov eax, pointToMoneyAmount
     sub eax, leftoverPoints
@@ -3359,7 +3328,7 @@ DeductRewardPoints:
 
     call Crlf
 
-    mov eax, white                      ; Set label text to white  
+    mov eax, white               ; Set label text to white  
     call SetTextColor
     mov edx, OFFSET extraPointMsg1
     call writeString
@@ -3375,47 +3344,47 @@ DeductRewardPoints:
     jmp NotConfirmRedeemMoney
 
 NotConfirmRedeemMoney:
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white               ; Set prompt text to white
     call SetTextColor
     call ContinueRequest
 
     ; Handle 'Y' or 'y'
     mov al, byte ptr [continueOption] ; Load continueOption into AL
-    or al, 32                           ; Convert 'Y' to 'y' (if uppercase)
+    or al, 32                    ; Convert 'Y' to 'y' (if uppercase)
     cmp al, 'y'
-    je getRedeemPointsLoop              ; If 'y' (or 'Y'), go to GetRedeemPointsLoop
+    je getRedeemPointsLoop       ; If 'y' (or 'Y'), go to GetRedeemPointsLoop
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je RequestReperform                 ; If 'n' (or 'N'), go to RequestReperform
+    je RequestReperform          ; If 'n' (or 'N'), go to RequestReperform
 
     ; Invalid input, re-prompt
-    mov eax, lightRed                   ; Set error message to red
+    mov eax, lightRed                 ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
-    call Crlf                    
+    call Crlf                    ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
-    jmp NotConfirmRedeemMoney           ; Loop back for valid input
+    jmp NotConfirmRedeemMoney     ; Loop back for valid input
 
 redeemVoucherCode:
     call ClrScr
 
 voucherMenuCodeLoop:
-    mov eax, white                      ; Set menu text to white
+    mov eax, white               ; Set menu text to white
     call SetTextColor
     mov edx, OFFSET voucherCodeMenu
     call writeString
 
 getVoucherCodeChoice:
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white               ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET voucherCodeMsg
     call writeString
 
-    mov eax, lightGreen                 ; Set input color to light green
+    mov eax, lightGreen          ; Set input color to light green
     call SetTextColor
     call ReadInt
     mov voucherCodeChoice, eax
@@ -3442,47 +3411,47 @@ getVoucherCodeChoice:
     je QuitProgram
 
 InvalidVoucherCodeChoce:
-    mov eax, lightRed                   ; Set error message to red
+    mov eax, lightRed                 ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
-    call Crlf                    
+    call Crlf
+    call Crlf                    ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     call WaitMsg
     call ClrScr
-    jmp voucherMenuCodeLoop            ; Loop back to re-display the menu
+    jmp voucherMenuCodeLoop      ; Loop back to re-display the menu
 
 redeemVoucher:
-
 makeConfirmationRedeemVoucher:
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white               ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET confirmVoucher
     call WriteString
 
     ; Read user input (confirmation)
-    mov eax, lightGreen                 ; Set input color to light green
+    mov eax, lightGreen          ; Set input color to light green
     call SetTextColor
     call ReadChar
-    or al, 32                           ; Convert to lowercase (handles 'Y' and 'y')
-    call WriteChar               
+    or al, 32                    ; Convert to lowercase (handles 'Y' and 'y')
+    call WriteChar               ; Echo the character
 
     cmp al, 'y'
-    je updateRewardPoints               ; If 'y', proceed to update balance
+    je updateRewardPoints        ; If 'y', proceed to update balance
 
     call Crlf
 
     cmp al, 'n'
-    je NotConfirmVoucher                ; If 'n', return to voucher menu
+    je NotConfirmVoucher         ; If 'n', return to voucher menu
 
     ; Invalid input, re-prompt
-    mov eax, lightRed                   ; Set error message to red
+    mov eax, lightRed                 ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
-    call Crlf                    
+    call Crlf                    ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     jmp makeConfirmationRedeemVoucher
@@ -3498,14 +3467,14 @@ UpdateRewardPoints:
 
     call Crlf
 
-    mov eax, lightGreen                 ; Set success message to light green
+    mov eax, lightGreen          ; Set success message to light green
     call SetTextColor
     mov edx, OFFSET voucherRedeemSuccess
     call writeString
 
     call Crlf
 
-    mov eax, yellow                     ; Set voucher code to yellow
+    mov eax, yellow              ; Set voucher code to yellow
     call SetTextColor
     
     cmp voucherCodeChoice, 1
@@ -3536,29 +3505,29 @@ printVoucher3Code:
 
 NotConfirmVoucher:
     call Crlf
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white               ; Set prompt text to white
     call SetTextColor
     call ContinueRequest
 
     ; Handle 'Y' or 'y'
     mov al, byte ptr [continueOption] ; Load continueOption into AL
-    or al, 32                           ; Convert 'Y' to 'y' (if uppercase)
+    or al, 32                     ; Convert 'Y' to 'y' (if uppercase)
     cmp al, 'y'
-    je getVoucherCodeChoice             ; If 'y' (or 'Y'), go to getVoucherCodeChoice
+    je getVoucherCodeChoice       ; If 'y' (or 'Y'), go to getVoucherCodeChoice
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je RequestReperform                 ; If 'n' (or 'N'), go to RequestReperform
+    je RequestReperform           ; If 'n' (or 'N'), go to RequestReperform
 
     ; Invalid input, re-prompt
-    mov eax, lightRed                   ; Set error message to red
+    mov eax, lightRed                  ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
     mov eax, white
     call SetTextColor
-    jmp NotConfirmVoucher               ; Loop back for valid input
+    jmp NotConfirmVoucher         ; Loop back for valid input
 
 notEnoughPoints:
     call Crlf
@@ -3567,7 +3536,7 @@ notEnoughPoints:
     mov edx, OFFSET insufficientRewardPoint
     call writeString
     call Crlf
-    call Crlf                        
+    call Crlf                     ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     call WaitMsg
@@ -3575,22 +3544,22 @@ notEnoughPoints:
     jmp voucherMenuCodeLoop
 
 RequestReperform:
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white                ; Set prompt text to white
     call SetTextColor
     call RePerformFunction
 
     ; Handle 'Y' or 'y' to go back to main menu
-    mov al, byte ptr [redoOption] 
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
     or al, 32
     cmp al, 'y'
     je DisplayMainMenu
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je QuitProgram                      ; If 'n' (or 'N'), go to QuitProgram
+    je QuitProgram                ; If 'n' (or 'N'), go to QuitProgram
 
     ; Invalid input, re-prompt
-    mov eax, lightRed                   ; Set error message to red
+    mov eax, lightRed                  ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
@@ -3598,33 +3567,30 @@ RequestReperform:
     call Crlf
     mov eax, white
     call SetTextColor
-    jmp RequestReperform                ; Loop back for valid input
+    jmp RequestReperform          ; Loop back for valid input
 
     ret
 RedeemPoints ENDP
 
-    ;+-----------------------+
-    ;|Estimate Future Rewards|
-    ;+-----------------------+
 EstimateFutureRewards PROC
     call ClrScr
 
-    mov eax, lightCyan                  ; Set title to light cyan
+    mov eax, lightCyan            ; Set title to light cyan
     call SetTextColor
     mov edx, OFFSET futureEstimateTitle
     call WriteString
     call Crlf
 
     ; Prompt for Monthly Deposit
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white                ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET promptMonthlyDeposit
     call WriteString
     
-    mov eax, lightGreen                 ; Set input color to light green
+    mov eax, lightGreen           ; Set input color to light green
     call SetTextColor
     call ReadInt
-    mov monthlyDeposit, eax             ; Store user's monthly deposit
+    mov monthlyDeposit, eax       ; Store user's monthly deposit
 
     ; Validate monthly deposit (must be positive)
     cmp eax, 0
@@ -3632,15 +3598,15 @@ EstimateFutureRewards PROC
 
 getNumberOfMonths:
     ; Prompt for Number of Months
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white                ; Set prompt text to white
     call SetTextColor
     mov edx, OFFSET promptMonths
     call WriteString
     
-    mov eax, lightGreen                 ; Set input color to light green
+    mov eax, lightGreen           ; Set input color to light green
     call SetTextColor
     call ReadInt
-    mov numberOfMonths, eax             ; Store number of months
+    mov numberOfMonths, eax       ; Store number of months
 
     ; Validate number of months (must be positive)
     cmp eax, 0
@@ -3650,45 +3616,45 @@ getNumberOfMonths:
     mov eax, monthlyDeposit
     mov ebx, 10
     xor edx, edx
-    div ebx                             ; EAX = reward points per month
+    div ebx                       ; EAX = reward points per month
 
     ; Multiply by numberOfMonths
     mov ebx, numberOfMonths
-    mul ebx                             ; EAX = estimated future reward points
+    mul ebx                       ; EAX = estimated future reward points
 
-    mov estimatedPoints, eax            ; Store in variable
+    mov estimatedPoints, eax      ; Store in variable
 
     ; Display result
     call Crlf
-    mov eax, white                      ; Set label text to white
+    mov eax, white                ; Set label text to white
     call SetTextColor
     mov edx, OFFSET estimatedPointsMsg
     call WriteString
     
-    mov eax, yellow                     ; Set result value to yellow
+    mov eax, yellow               ; Set result value to yellow
     call SetTextColor
     mov eax, estimatedPoints
     call WriteDec
     
-    mov eax, white                      ; Set unit text to white
+    mov eax, white                ; Set unit text to white
     call SetTextColor
     mov edx, OFFSET points
     call WriteString
     call Crlf
 
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white                ; Set prompt text to white
     call SetTextColor
     call ContinueRequest
 
     ; Handle 'Y' or 'y'
     mov al, byte ptr [continueOption] ; Load continueOption into AL
-    or al, 32                           ; Convert 'Y' to 'y' (if uppercase)
+    or al, 32                     ; Convert 'Y' to 'y' (if uppercase)
     cmp al, 'y'
-    je EstimateFutureRewards            ; If 'y' (or 'Y'), do another estimation
+    je EstimateFutureRewards      ; If 'y' (or 'Y'), do another estimation
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je ChooseAnotherFunction            ; If 'n' (or 'N'), choose another function
+    je ChooseAnotherFunction      ; If 'n' (or 'N'), choose another function
 
     ; Invalid input, re-prompt
     mov eax, lightRed                  ; Set error message to red
@@ -3701,42 +3667,42 @@ getNumberOfMonths:
 invalidMonthlyDepositInput:
     mov eax, lightRed                  ; Set error message to red
     call SetTextColor
-    mov edx, OFFSET invalidWithdrawMessage  
+    mov edx, OFFSET invalidWithdrawMessage  ; Reuse this error message
     call WriteString
     call Crlf
-    call Crlf                     
+    call Crlf                     ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     call WaitMsg
     mov eax, white
     call SetTextColor
-    jmp EstimateFutureRewards     
+    jmp EstimateFutureRewards     ; Start over
 
 invalidMonthsInput:
     mov eax, lightRed                  ; Set error message to red
     call SetTextColor
-    mov edx, OFFSET invalidWithdrawMessage  
+    mov edx, OFFSET invalidWithdrawMessage  ; Reuse this error message
     call WriteString
     call Crlf
-    call Crlf                    
+    call Crlf                     ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
-    jmp getNumberOfMonths               ; Retry months input
+    jmp getNumberOfMonths         ; Retry months input
 
 ContinueEstimatePrompt:
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white                ; Set prompt text to white
     call SetTextColor
     call ContinueRequest
     
     ; Handle 'Y' or 'y'
-    mov al, byte ptr [continueOption] 
-    or al, 32                           ; Convert 'Y' to 'y' (if uppercase)
+    mov al, byte ptr [continueOption] ; Load continueOption into AL
+    or al, 32                     ; Convert 'Y' to 'y' (if uppercase)
     cmp al, 'y'
-    je EstimateFutureRewards            ; If 'y' (or 'Y'), do another estimation
+    je EstimateFutureRewards      ; If 'y' (or 'Y'), do another estimation
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je ChooseAnotherFunction            ; If 'n' (or 'N'), choose another function
+    je ChooseAnotherFunction      ; If 'n' (or 'N'), choose another function
 
     ; Invalid input, re-prompt (recursively)
     mov eax, lightRed                  ; Set error message to red
@@ -3744,43 +3710,258 @@ ContinueEstimatePrompt:
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
-    call Crlf                    
+    call Crlf                     ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
     jmp ContinueEstimatePrompt
 
 ChooseAnotherFunction:
-    mov eax, white                      ; Set prompt text to white
+    mov eax, white                ; Set prompt text to white
     call SetTextColor
     call RePerformFunction
 
-    ; Handle 'Y' or 'y' to go back to main menu
-    mov al, byte ptr [redoOption] 
+    ; Handle 'Y' or 'y' to go back ;----------Initial Menu----------
+InitialMenu PROC
+    LOCAL choice:DWORD
+
+InitialMenuLoop:
+    call Clrscr
+    mov edx, OFFSET welcomeMessage
+    call WriteString
+    call Crlf
+    call Crlf
+
+    ; Display menu options
+    mov edx, OFFSET initialMenuOptions
+    call WriteString
+
+    ; Prompt user for choice
+    mov edx, OFFSET initialMenuPrompt
+    call WriteString
+    call ReadInt
+    mov choice, eax
+
+    ; Handle choices
+    cmp choice, 1
+    je Register
+
+    cmp choice, 2
+    je Login
+
+    cmp choice, 3
+    je QuitProgram
+
+    ; Invalid input
+    mov edx, OFFSET errorMessage
+    call WriteString
+    call Crlf
+    jmp InitialMenuLoop
+
+    ret
+InitialMenu ENDP
+
+;----------Register----------
+Register PROC
+    LOCAL username[32]:BYTE
+    LOCAL cardPart1:DWORD
+    LOCAL cardPart2:DWORD
+    LOCAL pin:DWORD
+    LOCAL balance:DWORD
+    LOCAL fileHandle:DWORD
+    LOCAL bytesWritten:DWORD
+
+    call Clrscr
+    mov edx, OFFSET registerPrompt
+    call WriteString
+    call Crlf
+
+    ; Prompt for username
+    mov edx, OFFSET usernamePrompt
+    call WriteString
+    call ReadString, ADDR username, 32
+
+    ; Prompt for card number (part 1)
+    mov edx, OFFSET cardPart1Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart1, eax
+
+    ; Prompt for card number (part 2)
+    mov edx, OFFSET cardPart2Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart2, eax
+
+    ; Prompt for PIN
+    mov edx, OFFSET pinPrompt
+    call WriteString
+    call ReadInt
+    mov pin, eax
+
+    ; Prompt for balance
+    mov edx, OFFSET balancePrompt
+    call WriteString
+    call ReadInt
+    mov balance, eax
+
+    ; Open file for appending
+    INVOKE CreateFile, ADDR fileName, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+    mov fileHandle, eax
+    cmp fileHandle, INVALID_HANDLE_VALUE
+    je RegisterFailed
+
+    ; Move to the end of the file
+    INVOKE SetFilePointer, fileHandle, 0, NULL, FILE_END
+
+    ; Write user data to file
+    lea edx, username
+    call WriteToFile, fileHandle, edx, 32
+    call WriteToFile, fileHandle, ADDR cardPart1, 4
+    call WriteToFile, fileHandle, ADDR cardPart2, 4
+    call WriteToFile, fileHandle, ADDR pin, 4
+    call WriteToFile, fileHandle, ADDR balance, 4
+
+    ; Close file
+    INVOKE CloseHandle, fileHandle
+
+    mov edx, OFFSET registerSuccess
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+RegisterFailed:
+    mov edx, OFFSET registerFailed
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+    ret
+Register ENDP
+
+;----------Login----------
+Login PROC
+    LOCAL cardPart1:DWORD
+    LOCAL cardPart2:DWORD
+    LOCAL pin:DWORD
+    LOCAL fileHandle:DWORD
+    LOCAL bytesRead:DWORD
+    LOCAL buffer[128]:BYTE
+
+    call Clrscr
+    mov edx, OFFSET loginPrompt
+    call WriteString
+    call Crlf
+
+    ; Prompt for card number (part 1)
+    mov edx, OFFSET cardPart1Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart1, eax
+
+    ; Prompt for card number (part 2)
+    mov edx, OFFSET cardPart2Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart2, eax
+
+    ; Prompt for PIN
+    mov edx, OFFSET pinPrompt
+    call WriteString
+    call ReadInt
+    mov pin, eax
+
+    ; Open file for reading
+    INVOKE CreateFile, ADDR fileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL
+    mov fileHandle, eax
+    cmp fileHandle, INVALID_HANDLE_VALUE
+    je LoginFailed
+
+    ; Read file content
+    INVOKE ReadFile, fileHandle, ADDR buffer, SIZEOF buffer, ADDR bytesRead, NULL
+    ; Now buffer contains the file content
+
+    ; Validate credentials
+    lea esi, buffer
+ValidateLoop:
+    ; Compare cardPart1
+    mov eax, cardPart1
+    cmp eax, [esi + 32]
+    jne NextRecord
+
+    ; Compare cardPart2
+    mov eax, cardPart2
+    cmp eax, [esi + 36]
+    jne NextRecord
+
+    ; Compare PIN
+    mov eax, pin
+    cmp eax, [esi + 40]
+    jne NextRecord
+
+    ; If all match, login success
+    mov edx, OFFSET loginSuccess
+    call WriteString
+    call Crlf
+    jmp DisplayMainMenu
+
+NextRecord:
+    add esi, 44 ; Move to the next record (32 bytes username + 4 bytes cardPart1 + 4 bytes cardPart2 + 4 bytes pin + 4 bytes balance)
+    cmp esi, OFFSET buffer + bytesRead
+    jb ValidateLoop
+
+    ; If no match found
+    mov edx, OFFSET loginFailed
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+LoginFailed:
+    mov edx, OFFSET loginFailed
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+    ret
+Login ENDP
+
+;----------Helper Procedure to Write to File----------
+WriteToFile PROC
+    LOCAL fileHandle:DWORD
+    LOCAL data:DWORD
+    LOCAL size:DWORD
+    LOCAL bytesWritten:DWORD
+
+    mov fileHandle, ecx
+    mov data, edx
+    mov size, ebx
+
+    INVOKE WriteFile, fileHandle, data, size, ADDR bytesWritten, NULL
+    ret
+WriteToFile ENDP
+
+to main menu
+    mov al, byte ptr [redoOption] ; Load redoOption into AL
     or al, 32
     cmp al, 'y'
     je DisplayMainMenu
 
     ; Handle 'N' or 'n'
     cmp al, 'n'
-    je QuitProgram                      ; If 'n' (or 'N'), quit program
+    je QuitProgram                ; If 'n' (or 'N'), quit program
 
     ; Invalid input, re-prompt
-    mov eax, lightRed                   ; Set error message to red
+    mov eax, lightRed                  ; Set error message to red
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
-    call Crlf                     
+    call Crlf                     ; Add extra blank line after error message
     mov eax, white
     call SetTextColor
-    jmp ChooseAnotherFunction           ; Loop back for valid input
+    jmp ChooseAnotherFunction     ; Loop back for valid input
 
     ret
 EstimateFutureRewards ENDP
-
-    ;+--------------------------------+
-    ;|           Quit Program         |
-    ;+--------------------------------+
 QuitProgram PROC
     mov eax, white
     call SetTextColor
@@ -3794,13 +3975,230 @@ QuitProgram PROC
     mov eax, white
     call SetTextColor
     call WaitMsg
-    call ExitProcess
+   ;----------Initial Menu----------
+InitialMenu PROC
+    LOCAL choice:DWORD
+
+InitialMenuLoop:
+    call Clrscr
+    mov edx, OFFSET welcomeMessage
+    call WriteString
+    call Crlf
+    call Crlf
+
+    ; Display menu options
+    mov edx, OFFSET initialMenuOptions
+    call WriteString
+
+    ; Prompt user for choice
+    mov edx, OFFSET initialMenuPrompt
+    call WriteString
+    call ReadInt
+    mov choice, eax
+
+    ; Handle choices
+    cmp choice, 1
+    je Register
+
+    cmp choice, 2
+    je Login
+
+    cmp choice, 3
+    je QuitProgram
+
+    ; Invalid input
+    mov edx, OFFSET errorMessage
+    call WriteString
+    call Crlf
+    jmp InitialMenuLoop
+
+    ret
+InitialMenu ENDP
+
+;----------Register----------
+Register PROC
+    LOCAL username[32]:BYTE
+    LOCAL cardPart1:DWORD
+    LOCAL cardPart2:DWORD
+    LOCAL pin:DWORD
+    LOCAL balance:DWORD
+    LOCAL fileHandle:DWORD
+    LOCAL bytesWritten:DWORD
+
+    call Clrscr
+    mov edx, OFFSET registerPrompt
+    call WriteString
+    call Crlf
+
+    ; Prompt for username
+    mov edx, OFFSET usernamePrompt
+    call WriteString
+    call ReadString, ADDR username, 32
+
+    ; Prompt for card number (part 1)
+    mov edx, OFFSET cardPart1Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart1, eax
+
+    ; Prompt for card number (part 2)
+    mov edx, OFFSET cardPart2Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart2, eax
+
+    ; Prompt for PIN
+    mov edx, OFFSET pinPrompt
+    call WriteString
+    call ReadInt
+    mov pin, eax
+
+    ; Prompt for balance
+    mov edx, OFFSET balancePrompt
+    call WriteString
+    call ReadInt
+    mov balance, eax
+
+    ; Open file for appending
+    INVOKE CreateFile, ADDR fileName, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+    mov fileHandle, eax
+    cmp fileHandle, INVALID_HANDLE_VALUE
+    je RegisterFailed
+
+    ; Move to the end of the file
+    INVOKE SetFilePointer, fileHandle, 0, NULL, FILE_END
+
+    ; Write user data to file
+    lea edx, username
+    call WriteToFile, fileHandle, edx, 32
+    call WriteToFile, fileHandle, ADDR cardPart1, 4
+    call WriteToFile, fileHandle, ADDR cardPart2, 4
+    call WriteToFile, fileHandle, ADDR pin, 4
+    call WriteToFile, fileHandle, ADDR balance, 4
+
+    ; Close file
+    INVOKE CloseHandle, fileHandle
+
+    mov edx, OFFSET registerSuccess
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+RegisterFailed:
+    mov edx, OFFSET registerFailed
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+    ret
+Register ENDP
+
+;----------Login----------
+Login PROC
+    LOCAL cardPart1:DWORD
+    LOCAL cardPart2:DWORD
+    LOCAL pin:DWORD
+    LOCAL fileHandle:DWORD
+    LOCAL bytesRead:DWORD
+    LOCAL buffer[128]:BYTE
+
+    call Clrscr
+    mov edx, OFFSET loginPrompt
+    call WriteString
+    call Crlf
+
+    ; Prompt for card number (part 1)
+    mov edx, OFFSET cardPart1Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart1, eax
+
+    ; Prompt for card number (part 2)
+    mov edx, OFFSET cardPart2Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart2, eax
+
+    ; Prompt for PIN
+    mov edx, OFFSET pinPrompt
+    call WriteString
+    call ReadInt
+    mov pin, eax
+
+    ; Open file for reading
+    INVOKE CreateFile, ADDR fileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL
+    mov fileHandle, eax
+    cmp fileHandle, INVALID_HANDLE_VALUE
+    je LoginFailed
+
+    ; Read file content
+    INVOKE ReadFile, fileHandle, ADDR buffer, SIZEOF buffer, ADDR bytesRead, NULL
+    ; Now buffer contains the file content
+
+    ; Validate credentials
+    lea esi, buffer
+ValidateLoop:
+    ; Compare cardPart1
+    mov eax, cardPart1
+    cmp eax, [esi + 32]
+    jne NextRecord
+
+    ; Compare cardPart2
+    mov eax, cardPart2
+    cmp eax, [esi + 36]
+    jne NextRecord
+
+    ; Compare PIN
+    mov eax, pin
+    cmp eax, [esi + 40]
+    jne NextRecord
+
+    ; If all match, login success
+    mov edx, OFFSET loginSuccess
+    call WriteString
+    call Crlf
+    jmp DisplayMainMenu
+
+NextRecord:
+    add esi, 44 ; Move to the next record (32 bytes username + 4 bytes cardPart1 + 4 bytes cardPart2 + 4 bytes pin + 4 bytes balance)
+    cmp esi, OFFSET buffer + bytesRead
+    jb ValidateLoop
+
+    ; If no match found
+    mov edx, OFFSET loginFailed
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+LoginFailed:
+    mov edx, OFFSET loginFailed
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+    ret
+Login ENDP
+
+;----------Helper Procedure to Write to File----------
+WriteToFile PROC
+    LOCAL fileHandle:DWORD
+    LOCAL data:DWORD
+    LOCAL size:DWORD
+    LOCAL bytesWritten:DWORD
+
+    mov fileHandle, ecx
+    mov data, edx
+    mov size, ebx
+
+    INVOKE WriteFile, fileHandle, data, size, ADDR bytesWritten, NULL
+    ret
+WriteToFile ENDP
+
+ call ExitProcess
     ret
 QuitProgram ENDP
 
-    ;+--------------------------------+
-    ;|           Redo Process         |
-    ;+--------------------------------+
+;----------Redo Process----------
 ContinueRequest PROC
     call Crlf
     mov edx, OFFSET continueMessage
@@ -3817,9 +4215,6 @@ ContinueRequest PROC
     ret
 ContinueRequest ENDP
 
-    ;+---------------------------------------+
-    ;|           Print Receipt Option        |
-    ;+---------------------------------------+
 PrintReceiptOption PROC
     mov eax, white
     call SetTextColor
@@ -3837,9 +4232,6 @@ PrintReceiptOption PROC
     ret
 PrintReceiptOption ENDP
 
-    ;+-------------------------------------+
-    ;|           RePerform Function        |
-    ;+-------------------------------------+
 RePerformFunction PROC
     mov eax, white
     call SetTextColor
@@ -3855,6 +4247,225 @@ RePerformFunction PROC
     call Crlf
     ret
 RePerformFunction ENDP
+
+;----------Initial Menu----------
+InitialMenu PROC
+    LOCAL choice:DWORD
+
+InitialMenuLoop:
+    call Clrscr
+    mov edx, OFFSET welcomeMessage
+    call WriteString
+    call Crlf
+    call Crlf
+
+    ; Display menu options
+    mov edx, OFFSET initialMenuOptions
+    call WriteString
+
+    ; Prompt user for choice
+    mov edx, OFFSET initialMenuPrompt
+    call WriteString
+    call ReadInt
+    mov choice, eax
+
+    ; Handle choices
+    cmp choice, 1
+    je Register
+
+    cmp choice, 2
+    je Login
+
+    cmp choice, 3
+    je QuitProgram
+
+    ; Invalid input
+    mov edx, OFFSET errorMessage
+    call WriteString
+    call Crlf
+    jmp InitialMenuLoop
+
+    ret
+InitialMenu ENDP
+
+;----------Register----------
+Register PROC
+    LOCAL username[32]:BYTE
+    LOCAL cardPart1:DWORD
+    LOCAL cardPart2:DWORD
+    LOCAL pin:DWORD
+    LOCAL balance:DWORD
+    LOCAL fileHandle:DWORD
+    LOCAL bytesWritten:DWORD
+
+    call Clrscr
+    mov edx, OFFSET registerPrompt
+    call WriteString
+    call Crlf
+
+    ; Prompt for username
+    mov edx, OFFSET usernamePrompt
+    call WriteString
+    call ReadString, ADDR username, 32
+
+    ; Prompt for card number (part 1)
+    mov edx, OFFSET cardPart1Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart1, eax
+
+    ; Prompt for card number (part 2)
+    mov edx, OFFSET cardPart2Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart2, eax
+
+    ; Prompt for PIN
+    mov edx, OFFSET pinPrompt
+    call WriteString
+    call ReadInt
+    mov pin, eax
+
+    ; Prompt for balance
+    mov edx, OFFSET balancePrompt
+    call WriteString
+    call ReadInt
+    mov balance, eax
+
+    ; Open file for appending
+    INVOKE CreateFile, ADDR fileName, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+    mov fileHandle, eax
+    cmp fileHandle, INVALID_HANDLE_VALUE
+    je RegisterFailed
+
+    ; Move to the end of the file
+    INVOKE SetFilePointer, fileHandle, 0, NULL, FILE_END
+
+    ; Write user data to file
+    lea edx, username
+    call WriteToFile, fileHandle, edx, 32
+    call WriteToFile, fileHandle, ADDR cardPart1, 4
+    call WriteToFile, fileHandle, ADDR cardPart2, 4
+    call WriteToFile, fileHandle, ADDR pin, 4
+    call WriteToFile, fileHandle, ADDR balance, 4
+
+    ; Close file
+    INVOKE CloseHandle, fileHandle
+
+    mov edx, OFFSET registerSuccess
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+RegisterFailed:
+    mov edx, OFFSET registerFailed
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+    ret
+Register ENDP
+
+;----------Login----------
+Login PROC
+    LOCAL cardPart1:DWORD
+    LOCAL cardPart2:DWORD
+    LOCAL pin:DWORD
+    LOCAL fileHandle:DWORD
+    LOCAL bytesRead:DWORD
+    LOCAL buffer[128]:BYTE
+
+    call Clrscr
+    mov edx, OFFSET loginPrompt
+    call WriteString
+    call Crlf
+
+    ; Prompt for card number (part 1)
+    mov edx, OFFSET cardPart1Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart1, eax
+
+    ; Prompt for card number (part 2)
+    mov edx, OFFSET cardPart2Prompt
+    call WriteString
+    call ReadInt
+    mov cardPart2, eax
+
+    ; Prompt for PIN
+    mov edx, OFFSET pinPrompt
+    call WriteString
+    call ReadInt
+    mov pin, eax
+
+    ; Open file for reading
+    INVOKE CreateFile, ADDR fileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL
+    mov fileHandle, eax
+    cmp fileHandle, INVALID_HANDLE_VALUE
+    je LoginFailed
+
+    ; Read file content
+    INVOKE ReadFile, fileHandle, ADDR buffer, SIZEOF buffer, ADDR bytesRead, NULL
+    ; Now buffer contains the file content
+
+    ; Validate credentials
+    lea esi, buffer
+ValidateLoop:
+    ; Compare cardPart1
+    mov eax, cardPart1
+    cmp eax, [esi + 32]
+    jne NextRecord
+
+    ; Compare cardPart2
+    mov eax, cardPart2
+    cmp eax, [esi + 36]
+    jne NextRecord
+
+    ; Compare PIN
+    mov eax, pin
+    cmp eax, [esi + 40]
+    jne NextRecord
+
+    ; If all match, login success
+    mov edx, OFFSET loginSuccess
+    call WriteString
+    call Crlf
+    jmp DisplayMainMenu
+
+NextRecord:
+    add esi, 44 ; Move to the next record (32 bytes username + 4 bytes cardPart1 + 4 bytes cardPart2 + 4 bytes pin + 4 bytes balance)
+    cmp esi, OFFSET buffer + bytesRead
+    jb ValidateLoop
+
+    ; If no match found
+    mov edx, OFFSET loginFailed
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+LoginFailed:
+    mov edx, OFFSET loginFailed
+    call WriteString
+    call Crlf
+    jmp InitialMenu
+
+    ret
+Login ENDP
+
+;----------Helper Procedure to Write to File----------
+WriteToFile PROC
+    LOCAL fileHandle:DWORD
+    LOCAL data:DWORD
+    LOCAL size:DWORD
+    LOCAL bytesWritten:DWORD
+
+    mov fileHandle, ecx
+    mov data, edx
+    mov size, ebx
+
+    INVOKE WriteFile, fileHandle, data, size, ADDR bytesWritten, NULL
+    ret
+WriteToFile ENDP
 
 END MAIN
 
