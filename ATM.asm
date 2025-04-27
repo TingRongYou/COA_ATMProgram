@@ -1,3 +1,20 @@
+    COMMENT @ 
+    Team member: Ting Rong You
+                 Yong Chong Xin
+                 Wan Zi Kang
+                 Sik Zhe Yang
+
+    Project Overview:
+                     - Title: Premier ATM System
+                     - Functions included: Money deposit, Money withdrawal, Check Balance, Currency Conversion, Future Value Calculation, Rewards
+                     - Login information: 1st 8-digit credit card number -> 11112222, 2nd 8-digit credit card number -> 33334444, PIN Number -> 718111
+
+    Additional features included:
+                    - set text color
+                    - mask input (PIN Number)
+    @   
+
+
 INCLUDE Irvine32.inc
 
 .DATA
@@ -3094,7 +3111,7 @@ RewardMenuLoop:
 
     mov edx, OFFSET points
     call writeString
-
+            
     call Crlf
     call Crlf
 
@@ -3446,6 +3463,7 @@ InvalidVoucherCodeChoce:
     call SetTextColor
     mov edx, OFFSET errorMessage
     call WriteString
+    call Crlf
     call Crlf                    
     mov eax, white
     call SetTextColor
@@ -3556,6 +3574,7 @@ NotConfirmVoucher:
     mov edx, OFFSET errorMessage
     call WriteString
     call Crlf
+    call Crlf
     mov eax, white
     call SetTextColor
     jmp NotConfirmVoucher               ; Loop back for valid input
@@ -3646,11 +3665,11 @@ getNumberOfMonths:
     cmp eax, 0
     jle invalidMonthsInput
 
-    ; Calculate: monthlyDeposit / 10
+    ; Calculate: monthlyDeposit / conversionFactor
     mov eax, monthlyDeposit
-    mov ebx, 10
+    mov ebx, conversionFactor
     xor edx, edx
-    div ebx                             ; EAX = reward points per month
+    div ebx                                 
 
     ; Multiply by numberOfMonths
     mov ebx, numberOfMonths
